@@ -1,0 +1,6 @@
+User:
+  muc:
+    username: admin
+    password: s3cr3t
+    email: admin@onload.loc
+    admin: true

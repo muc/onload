@@ -1,0 +1,25 @@
+User:
+  tableName: user
+  actAs: [Timestampable]
+  columns:
+    id:
+      type: integer(8)
+      unsigned: true
+      primary: true
+      autoincrement: true
+    username:
+      type: string(50)
+      notnull: true
+    password:
+      type: string(50)
+      notnull: true
+    email:
+      type: string(100)
+      notnull: true
+    admin: boolean
+  relations:
+    Folders:
+      type: many
+      class: Folder
+      local: owner
+      foreign: id

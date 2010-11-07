@@ -1,0 +1,20 @@
+Folder:
+  tableName: folder
+  columns:
+    id:
+      type: integer(8)
+      unsigned: true
+      primary: true
+      autoincrement: true
+    parent: string(255)
+    name: 
+      type: string(255)
+      notnull: true
+    description: string(255)
+    owner:
+      type: integer(8)
+      unsigned: true
+  relations:
+    User:
+      local: owner
+      foreign: id
