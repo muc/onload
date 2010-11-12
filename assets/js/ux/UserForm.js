@@ -27,15 +27,15 @@ UserForm = Ext.extend(Ext.form.FormPanel, {
               xtype: 'textfield',
               fieldLabel: 'Username',
               name: 'username',
-              width: 220,
+              width: 210,
               disabled: true,
-              ref: '../usernameField'
+              ref: '../usernameField',
           },
           {
               xtype: 'textfield',
               fieldLabel: 'E-Mail',
               name: 'email',
-              width: 220,
+              width: 210,
               disabled: true,
               ref: '../emailField'
           },
@@ -43,14 +43,14 @@ UserForm = Ext.extend(Ext.form.FormPanel, {
               xtype: 'textfield',
               fieldLabel: 'Password',
               name: 'password',
-              width: 220,
+              width: 210,
               disabled: true,
               ref: '../passwordField'
           },
           {
               xtype: 'checkbox',
               fieldLabel: '',
-              boxLabel: 'is Admin',
+              boxLabel: 'ist Admin',
               name: 'admin',
               disabled: true,
               ref: '../adminField'
@@ -62,8 +62,19 @@ UserForm = Ext.extend(Ext.form.FormPanel, {
   
   buildUI: function(){
     return [
-      { ref: '../saveBtn', text: 'Save', hidden: true, handler: doUserSave, scope: this},
-      { ref: '../cancelBtn', text: 'Cancel', hidden: true, handler: doUserCancel, scope: this}
+      { 
+        ref: '../saveBtn',
+        text: 'Save', 
+        iconCls: 'save-icon',
+        hidden: true, 
+        scope: this
+      },{ 
+        ref: '../cancelBtn', 
+        text: 'Cancel', 
+        iconCls: 'cancel-icon', 
+        hidden: true, 
+        scope: this
+      }
     ];
   },
   

@@ -66,3 +66,26 @@ a:hover {
   color: #E18325;
   text-decoration: underline;
 }
+
+
+.x-window-mc {
+  background-color: #f4f4f4;
+}
+
+/* Icons */
+
+.lock-go-icon { background-image: url(../img/lock_go.png) !important; }
+.add-icon { background-image: url(../img/add.png) !important; }
+.edit-icon { background-image: url(../img/edit.png) !important; }
+.delete-icon { background-image: url(../img/delete.png) !important; }
+.reload-icon { background-image: url(../img/reload.png) !important; }
+.save-icon { background-image: url(../img/save.png) !important; }
+.cancel-icon { background-image: url(../img/cancel.png) !important; }
+.folder-add-icon { background-image: url(../img/folder_add.png) !important; }
+
+.home-icon { background-image: url(../img/home.png) !important; }
+.user-panel-icon { background-image: url(../img/group.png) !important; }
+
+.folder-icon { background-image: url(../img/folder.gif) !important; }
+
+

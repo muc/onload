@@ -10,6 +10,7 @@ Folder:
     name: 
       type: string(255)
       notnull: true
+    path: string(255)
     description: string(255)
     owner:
       type: integer(8)

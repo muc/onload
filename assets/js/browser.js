@@ -1,131 +1,237 @@
-var FileRec = new Ext.data.Record.create([
-  {name: 'id', type: 'int'},
-  {name: 'name'},
-  {name: 'descr'},
-  {name: 'tags'},
-  {name: 'size'},
-  {name: 'perm'},
-  {name: 'type'},
-  {name: 'files'}
-]);
 
-var filesStore = new Ext.data.Store({
-  reader: new Ext.data.JsonReader({
-    total: 'total',
-    root: 'data'
-  }, FileRec),
-  proxy: new Ext.data.HttpProxy({
-    url: 'ajax/files',
-    method: 'POST'
-  }),
-  autoLoad: true,
-  listeners: {
-    load: function() {
-      filesStore.insert(0, new FileRec({'name': '.. übergeordneter Ordner', 'type': 'parent'}));
-    }
-  }
-});
-
-var sm = new Ext.grid.CheckboxSelectionModel({
-  renderer: function(value, meta, record, rowIndex, colIndex, store) {
-    if (record.get('type') != 'parent') {
-      return '<div class="x-grid3-row-checker">&nbsp;</div>';
-    }
-  },
-  listeners: {
-    selectionchange: function() {
-      if (filesStore.getAt(0).get('type') == 'parent' && this.isSelected(0)) {
-        this.deselectRow(0);
-      }
-      browserGrid.downloadBtn.setDisabled(this.getCount() < 1);
-      browserGrid.editBtn.setDisabled(this.getCount() != 1);
-      browserGrid.deleteBtn.setDisabled(this.getCount() < 1);
-    }
-  }
-});
-
-function renderName(value, meta, record, rowIndex, colIndex, store) {
-  if (record.get('type') == 'folder') {
-    return '<a href="#">' + value + '</a>&nbsp;&nbsp;&nbsp;<span style="color:#bbb;">' + record.get('files') + ' Dateien</span>';
-  }
-  else if (record.get('type') == 'parent') {
-    return '<a href="#" style="color:#bbb;">' + value + '</a>';
-  }
-  else {
-    return value;
-  }
-}
-
-function doReload() {
-  Ext.getCmp('browserGrid').body.mask('Loading data...');
-  filesStore.load({callback: function(){
-    Ext.getCmp('browserGrid').body.unmask();
-  }});
-}
-
-var browserGrid = new Ext.grid.GridPanel({
-  id: 'browserGrid',
-  title: 'Files (sample data)',
-  store: filesStore,
+Ext.onReady(function() {
+  Ext.QuickTips.init();
+  Ext.BLANK_IMAGE_URL = BASE_URL + 'assets/js/ext/resources/images/default/s.gif';
   
-  cm: new Ext.grid.ColumnModel({
-    defaults: {
-      sortable: false,
-      menuDisabled: true
-    },
-    columns: [
-      sm,
-      {id: 'name', header: 'Name', width: 200, dataIndex: 'name', renderer: renderName},
-      {id: 'descr', header: 'Description', dataIndex: 'descr'},
-      {header: 'Tags', width: 200, dataIndex: 'tags'},
-      {header: 'Size', width: 100, dataIndex: 'size'},
-      {header: 'Perm', width: 50, dataIndex: 'perm'},
+  var Folder = Ext.data.Record.create([
+    {name: 'id', type: 'int'},
+    {name: 'name'},
+    {name: 'path'},
+    {name: 'parent', type: 'int'},
+    {name: 'description'},
+    {name: 'tags'}
+  ]);
+
+  /*
+   * Initialize the create/edit folder dialog
+   */
+  var folderDlg = new FolderWin();
+  
+  /*
+   * Initialize the browser tree component
+   */
+  var browserTree = new BrowserTree({
+    dataUrl: 'browse/getall'
+  });
+  browserTree.root.setId(0);
+  
+  /*
+   * Initialize the browser panel component
+   */
+  var browserPanel = new BrowserPanel({
+    renderTo: 'content-panel',
+    items: [browserTree]
+  });
+
+  var breadCrumb = new Ext.Toolbar({
+    renderTo: browserPanel.tbar,
+    items: [
+      '<a href="#">Home</a> » Subfolder'
     ]
-  }),
-  sm: sm,
-  autoExpandColumn: 'descr',
-  columnLines: true,
-  width:940,
-  autoHeight: true,
-  frame:true,
-  tbar: [
-    { text: 'Upload', minWidth: 70, style: 'margin-right: 5px;'},
-    { ref: '../downloadBtn', text: 'Download', minWidth: 70, style: 'margin-right: 5px;', disabled: true},
-    { ref: '../editBtn', text: 'Edit', minWidth: 70, style: 'margin-right: 5px;', disabled: true},
-    { ref: '../deleteBtn', text: 'Delete', minWidth: 70, style: 'margin-right: 5px;', disabled: true},
-    '->',
-    { text: 'Reload', minWidth: 70, style: 'margin-right: 5px;', handler: doReload},
-    
-  ],
-  bbar: new Ext.ux.StatusBar({
-    id: 'browserStatusBar',
-    defaultText: 'Statusbar'
-  }),
-  buttons: [{text: 'A Button', handler: function() {
-    Ext.Ajax.request({
-      method: 'POST',
-      url: 'ajax/currentuser',
-      success: function() {
-        
-      },
-      failure: function() {
-        
+  });
+  
+  /*
+   * Event when logout is clicked
+   * redirect to /logout with animations
+   */
+  Ext.get('a-logout').on('click', function() {
+    Ext.select('header').slideOut('r');
+    Ext.select('nav').slideOut('l', {callback: function() {
+      Ext.get('content-panel').switchOff({
+        duration: 0.3,
+        callback: function() {
+          window.location = 'logout';
+        }
+      });
+    }});
+  });
+  
+  /*
+   * Event, when selection in browser tree has changed.
+   * 
+   * Disable/enable toolbar buttons, depending on selected nodes
+   */
+  browserTree.on('selectionchange', function(selModel, nodes) {
+    browserPanel.downloadBtn.setDisabled(nodes.length < 1);
+    browserPanel.editBtn.setDisabled(nodes.length != 1);
+    browserPanel.deleteBtn.setDisabled(nodes.length < 1);
+    browserPanel.newBtn.setDisabled(nodes.length > 1);
+  });
+  
+  
+  /*
+   * Doubleclick event for browser tree
+   */
+  browserTree.on('dblc', function(node) {
+  });
+  
+  /**
+   * Click event on [Reload].
+   * Reloads the browser tree
+   */
+  browserPanel.reloadBtn.on('click', function() {
+    browserTree.getLoader().load(browserTree.root);
+  });
+  
+  /**
+   * Click event for 'delete'
+   */
+  browserPanel.deleteBtn.on('click', function() {
+    var selection = browserTree.getSelectionModel().getSelectedNodes();
+    var bChilds = false;
+    Ext.each(selection, function(item, index) {
+      if (item.hasChildNodes()) {
+        bChilds = true;
       }
     });
-  }}],
-  buttonAlign:'center',
-  listeners: {
-    rowdblclick: function(grid, rowIndex, e) {
-      var record = filesStore.getAt(rowIndex);
-      console.log('DblClicked: id:' + record.get('id') + ' » ' + record.get('name') + '(' + record.get('type') + ')');
+    if (bChilds) {
+      Ext.MessageBox.alert('Error' , "You can't delete folders, that contains subfolder!");
+    }
+    else {
+      Ext.MessageBox.confirm('Delete Folder', 'Are you sure you want to delete selected folders?', function(btn) {
+        if (btn == 'yes') {
+          Ext.each(selection, function(item, index, allItems) {
+            if (item.attributes.type == 'folder') {
+              // delete folder
+              Ext.Ajax.request({
+                url: 'browse/deletefolder',
+                method: 'post',
+                params: {id: item.attributes.id},
+              });
+            }
+            else {
+              // delete file
+            }
+          });
+          browserTree.getLoader().load(browserTree.root);
+        }
+      });
+    }
+  });
+  
+  /*
+   * Click event on 'create new Folder'
+   */
+  browserPanel.newBtn.on('click', function() {
+    var selection = browserTree.getSelectionModel().getSelectedNodes();
+    var parent = null;
+    
+    parent = selection.length == 0 ? browserTree.getRootNode() : selection[0].attributes.type == 'folder' ? selection[0] : selection[0].parentNode;
+    var parent_path = parent.attributes.path;
+    var path = parent.isRoot ? '/' : parent_path + parent.text + '/';
+    var parent_id = parent.isRoot ? 0 : parent.attributes.id;
+    
+    var rec = new Folder({
+      id: null,
+      name: null,
+      path: path,
+      parent: parent_id
+    });
+    
+    folderDlg.loadRecord(rec);
+    folderDlg.show();
+  });
+
+  
+  /*
+   * Click event on 'create new Folder'
+   */
+  browserPanel.editBtn.on('click', function() {
+    var selection = browserTree.getSelectionModel().getSelectedNodes();
+    var node = selection[0];
+    if (node.attributes.type == 'file') {
+      console.log('edit file');
+      // edit file
+    }
+    else {
+      // edit folder dialog
+      var parent = selection[0].parentNode;
+      var parent_path = parent.attributes.path;
+      var path = parent.isRoot ? '/' : parent_path + parent.text + '/';
+      var rec = new Folder({
+        id: node.attributes.id,
+        name: node.attributes.name,
+        path: path,
+        parent: node.attributes.parent
+      });
+      folderDlg.loadRecord(rec);
+      folderDlg.show();
+    }
+  });
+
+  /*
+   * Event, when [ok] button in FolderWin was clicked
+   */
+  folderDlg.on('ok', function(formPanel, values) {
+    if (values.id) {
+      // edit folder
+      /*
+      Ext.Ajax.request({
+        url: 'browse/test',
+        method: 'post',
+        success: function(result) {
+          var jsonData = Ext.util.JSON.decode(result.responseText);
+          var root = browserTree.getRootNode();
+          var pnode = root.findChild('id', 11, true);
+          console.log(pnode);
+          browserTree.getLoader().load(pnode);
+          browserTree.expandPath(pnode.getPath());
+        }
+      });
+      */
+      //var node = browserTree.root.findChild('id', 4, true);
+      //console.log(node);
+    }
+    else {
+      // create new folder
+      var pnode = values.parent == 0 ? browserTree.root : browserTree.root.findChild('id', values.parent, true);
+      Ext.Ajax.request({
+        url: 'browse/createfolder',
+        params: { 
+          name: values.name,
+          parent: values.parent, 
+        },
+        success: function(result) {
+          var jsonData = Ext.util.JSON.decode(result.responseText);
+          selectNode(pnode, jsonData.data.id)
+        }
+      });
+    }
+  });
+  
+  function selectNode(pnode, id) {
+    if (pnode.isRoot) {
+      browserTree.getLoader().load(browserTree.root, function() {
+        browserTree.getSelectionModel().select(browserTree.root.findChild('id', id));
+      });
+    }
+    else {
+      var paths = pnode.getPath().split("/");
+      browserTree.getLoader().load(browserTree.root, function() {
+      var node = browserTree.root;
+        for (var i = 2; i < paths.length; i++) {
+          node = node.findChild('id', paths[i]);
+          node.expand(false, false);
+        }
+        browserTree.getSelectionModel().select(node.findChild('id', id));
+      });
     }
   }
-});
+  
+  browserPanel.testBtn.on('click', function() {
+    var selection = browserTree.getSelectionModel().getSelectedNodes();
+    var pnode = selection[0].parentNode;
+    console.log(pnode);
+  });
 
-var breadCrumb = new Ext.Toolbar({
-  renderTo: browserGrid.tbar,
-  items: [
-    '<a href="#">Home</a> » Subfolder'
-  ]
 });
-

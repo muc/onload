@@ -10,7 +10,7 @@ Ext.onReady(function() {
     width: 940,
     autoHheight: true,
     border: false,
-    items: [browserGrid, adminPanel],
+    items: [browserGrid],
     activeItem: 0,
   });
   
@@ -20,25 +20,6 @@ Ext.onReady(function() {
       '<a href="#">Home</a> » Subfolder'
     ]
   });
-  
-  var adminLink = Ext.get('a-admin');
-  if (adminLink) {
-    adminLink.on('click', function() {
-      Ext.get('content-panel').slideOut('t', {callback: function() {
-        if (cardPanel.getLayout().activeItem.id == 'browserGrid') {
-          doReloadUserGrid();
-          cardPanel.getLayout().setActiveItem('adminPanel');
-          adminLink.update('Back to File Browser');
-        }
-        else {
-          cardPanel.getLayout().setActiveItem('browserGrid');
-          adminLink.update('Admin');
-        }
-      }});
-      Ext.get('content-panel').slideIn('t');
-    });
-  }
-  
   
   Ext.get('a-logout').on('click', function() {
     Ext.select('header').slideOut('r');

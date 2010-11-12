@@ -3,17 +3,19 @@ Ext.onReady(function() {
   Ext.QuickTips.init();
   Ext.BLANK_IMAGE_URL = BASE_URL + 'assets/js/ext/resources/images/default/s.gif';
   
+  var loginForm = new LoginForm({
+    id: 'loginForm',
+    url: 'ajax/login',
+    keys: [{
+      key: [Ext.EventObject.ENTER],
+      fn: doLogin
+    }]
+  });
+  
   var loginPanel = new Ext.Panel({
     id: 'loginPanel',
     border: true,
-    items: [new LoginForm({
-      id: 'loginForm',
-      url: BASE_URL + 'ajax/login',
-      keys: [{
-        key: [Ext.EventObject.ENTER],
-        fn: doLogin
-      }]
-    })],
+    items: [loginForm],
     renderTo: 'login-form',
     bbar: new Ext.ux.StatusBar({
       id: 'statusBar',
@@ -40,7 +42,6 @@ Ext.onReady(function() {
          Ext.getCmp('loginPanel').body.unmask();
          Ext.getCmp('statusBar').clearStatus();
          if (action.failureType == 'server') {
-           //Ext.get('error-msg').update('Invalid username or password');
            Ext.getCmp('statusBar').setStatus({
              text: 'Invalid username or password!',
              iconCls: 'x-status-error'
@@ -54,10 +55,16 @@ Ext.onReady(function() {
     doLogin();
   });
   
+  loginForm.on('enterkey_pressed', function() {
+    doLogin();
+  });
+  
   Ext.get('lostPwLink').on('click', function() {
     console.log('Todo: lostPasswordFunction');
   });
   
   Ext.getCmp('statusBar').clearStatus();
+  
+  Ext.getCmp('loginUserName').focus();
   
 });

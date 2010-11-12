@@ -5,12 +5,19 @@
   <title><?php echo $title;?></title>
   <?php $this->load->view('extjs_header');?>
   <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/style.css" />
-  <?php if ($user->admin): ?>
-  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/UserForm.js"></script>
-  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/admin.js"></script>
-  <?php endif; ?>
+  <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/js/ext/ux/treegrid/treegrid.css" rel="stylesheet" />
+  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ext/ux/treegrid/TreeGridSorter.js"></script>
+  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ext/ux/treegrid/TreeGridColumnResizer.js"></script>
+  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ext/ux/treegrid/TreeGridNodeUI.js"></script>
+  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ext/ux/treegrid/TreeGridLoader.js"></script>
+  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ext/ux/treegrid/TreeGridColumns.js"></script>
+  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ext/ux/treegrid/TreeGrid.js"></script>
+  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ux/BrowserTree.js"></script>
+  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ux/BrowserPanel.js"></script>
+  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ux/FolderForm.js"></script>
+  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ux/FolderWin.js"></script>
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/browser.js"></script>
-  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/onload.js"></script>
+  <!--<script type="text/javascript" src="<?php echo base_url(); ?>assets/js/onload.js"></script>-->
 </head>
 <body>
 
@@ -23,7 +30,7 @@
     	<li><a id="a-logout" href="#">Logout</a></li>
     	<li><a href="#">Change Password</a></li>
     	<?php if ($user->admin): ?>
-    	 <li><a id="a-admin" href="#">Admin</a></li>
+    	 <li><a id="a-admin" href="admin">Admin</a></li>
     	<?php endif; ?>
     </ul>
   </nav>

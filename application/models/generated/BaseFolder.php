@@ -29,15 +29,21 @@ abstract class BaseFolder extends Doctrine_Record
              'autoincrement' => true,
              'length' => '8',
              ));
-        $this->hasColumn('parent', 'string', 255, array(
-             'type' => 'string',
-             'length' => '255',
+        $this->hasColumn('parent', 'integer', 8, array(
+             'type' => 'integer',
+             'unsigned' => true,
+             'length' => '8',
              ));
         $this->hasColumn('name', 'string', 255, array(
              'type' => 'string',
              'notnull' => true,
              'length' => '255',
              ));
+        $this->hasColumn('path', 'string', 255, array(
+             'type' => 'string',
+             'notnull' => true,
+             'length' => '255',
+        ));
         $this->hasColumn('description', 'string', 255, array(
              'type' => 'string',
              'length' => '255',
