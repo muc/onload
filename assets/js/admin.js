@@ -102,6 +102,28 @@ Ext.onReady(function() {
     }
   }
   
+  var editor = new Ext.ux.grid.RowEditor({
+    saveText: 'Save',
+    listeners: {
+      move: function(p){ this.resize(); },
+      hide: function(p){
+        var mainBody = this.grid.getView().mainBody;
+        var lastRow = Ext.fly(this.grid.getView().getRow(this.grid.getStore().getCount()-1));
+        mainBody.setHeight(lastRow.getBottom() - mainBody.getTop(),{
+          callback: function(){ mainBody.setHeight('auto'); }
+        });
+      },
+      afterlayout: function(container, layout) { this.resize(); }
+    },
+    resize: function() {
+      var row = Ext.fly(this.grid.getView().getRow(this.rowIndex)).getBottom();
+      var lastRow = Ext.fly(this.grid.getView().getRow(this.grid.getStore().getCount()-1)).getBottom();
+      var mainBody = this.grid.getView().mainBody;
+      var h = Ext.max([row + this.btns.getHeight() + 10, lastRow]) - mainBody.getTop();
+      mainBody.setHeight(h,true);
+    }
+  });
+  
   var adminGrid = new Ext.grid.GridPanel({
     id: 'adminGrid',
     frame: false,
@@ -109,6 +131,7 @@ Ext.onReady(function() {
     columnWidth: 1,
     autoHeight: true,
     loadMask: true,
+    plugins: [editor],
     store: userStore,
     cm: new Ext.grid.ColumnModel({
       defaults: {
@@ -122,17 +145,29 @@ Ext.onReady(function() {
         }, {
           header: 'Username', 
           width: 200, 
-          dataIndex: 'username'
+          dataIndex: 'username',
+          editor: {
+            xtype: 'textfield',
+            allowBlank: false
+          }
         }, {
           id: 'email', 
           header: 'E-Mail', 
-          dataIndex: 'email' 
+          dataIndex: 'email',
+          editor: {
+            xtype: 'textfield',
+            allowBlank: false,
+            vtype: 'email'
+          } 
         }, {
           header: 'Admin', 
           width: 50, 
           align: 'center',
           dataIndex: 'admin',
-          renderer: renderIsAdmin
+          renderer: renderIsAdmin,
+          editor: {
+            xtype: 'checkbox'
+          }
         }
       ],
     }),

@@ -5,6 +5,8 @@
   <title>Admin | ON.load</title>
   <?php $this->load->view('extjs_header');?>
   <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/style.css" />
+  <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/js/ext/ux/roweditor/css/RowEditor.css" />
+  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ext/ux/roweditor/RowEditor.js"></script>
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ux/UserForm.js"></script>
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/admin.js"></script>
 </head>
