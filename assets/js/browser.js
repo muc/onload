@@ -54,8 +54,8 @@ Ext.onReady(function() {
       api: {
           read : 'browser/get_dir',
           create : 'browser/create_dir',
-          update: 'browser/update_dir',
-          destroy: 'browser/delete_dir'
+          update: 'browser/update',
+          destroy: 'browser/delete'
       },
       //url: 'browser/get_dir',
       method: 'POST',
@@ -64,7 +64,7 @@ Ext.onReady(function() {
       encode: true,
     }),
     autoSave: true,
-    baseParams: {fid: curFolder.fid},
+    baseParams: { fid: curFolder.fid },
     listeners: {
       load: function(s, records) {
         if (curFolder.get('fid') > 0) {

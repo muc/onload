@@ -83,40 +83,103 @@ class Browser extends Controller {
     echo $this->response->toJson();
   }
 
-  function update_dir() {
+  function update() {
     $data = json_decode($this->input->post('data'), true);
     $id = $data['fid'];
     unset($data['fid']);
-    $folder = Doctrine_Core::getTable('Folder')->find($id);
-    
-    if (array_key_exists('name', $data)) {
-      rename($this->root . $folder->path . $folder->name, $this->root . $folder->path . $data['name']);
+    if ($id < 1000000000) {
+      //update folder
+      $folder = Doctrine_Core::getTable('Folder')->find($id);
+      
+      if (array_key_exists('name', $data)) {
+        rename($this->root . $folder->path . $folder->name, $this->root . $folder->path . $data['name']);
+      }
+      foreach ($data as $key => $value) {
+        $folder->$key = $value;
+      }
+      $folder->save();
+      $this->response->success = true;
+      $this->response->data = array(
+        'fid' => $folder->id, 
+        'name' => $folder->name,
+        'type' => 'folder',
+        'path' => $folder->path,
+        'parent' => $folder->parent,
+        'description' => $folder->description,
+        'icon' => 'folder-icon',
+      );
     }
-    foreach ($data as $key => $value) {
-      $folder->$key = $value;
+    else {
+      // update file
+      $this->load->helper('file');
+      $this->load->helper('number');
+      $id = $id / 1000000000;
+      $q = Doctrine_Query::create()
+        ->select('d.path, f.name')
+        ->from('Folder d')
+        ->leftJoin('d.Files f')
+        ->where('f.id = ?', $id);
+      $f = $q->fetchOne();
+      
+      $path = $this->root . $f->path . ( $f->id == 0 ? '' : $f->name . '/');
+      if (array_key_exists('name', $data)) {
+        rename($path . $f->Files[0]->name, $path . $data['name']);
+      }
+      foreach ($data as $key => $value) {
+        $f->Files[0]->$key = $value;
+        $f->Files[0]->save();
+        
+        $info = get_file_info($path . $f->Files[0]->name, array('size'));
+        $exts = explode('.', $f->Files[0]->name);
+        $ext = $exts[count($exts) - 1];
+        
+        $this->response->success = true;
+        $this->response->data = array(
+          'fid' => $f->Files[0]->id * 1000000000,
+          'name' => $f->Files[0]->name,
+          'ext' => $ext,
+          'type' => 'file',
+          'description' => $f->Files[0]->description,
+          'parent' => $f->id,
+          'size' => byte_format($info['size']),
+          'icon' => 'file-' . $ext, 
+        );
+      }
     }
-    $folder->save();
-    $this->response->success = true;
-    $this->response->data = array(
-      'fid' => $folder->id, 
-      'name' => $folder->name,
-      'type' => 'folder',
-      'path' => $folder->path,
-      'parent' => $folder->parent,
-      'description' => $folder->description,
-      'icon' => 'folder-icon',
-    );
     echo $this->response->toJson();
   }
 
-  function delete_dir() {
+  function delete() {
     $id = json_decode($this->input->post('data'), true);
-    $folder = Doctrine_Core::getTable('Folder')->find($id);
-    if (rmdir($this->root . $folder->path . $folder->name)) {
-      $folder->delete();
-      $this->response->success = true;
+    if ($id < 1000000000) {
+      // delete folder
+      echo 'folder';
+      $folder = Doctrine_Core::getTable('Folder')->find($id);
+      if (rmdir($this->root . $folder->path . $folder->name)) {
+        $folder->delete();
+        $this->response->success = true;
+      }
+    }
+    else {
+      // delete file
+      $id = $id / 1000000000;
+      $q = Doctrine_Query::create()
+        ->select('d.path, f.name')
+        ->from('Folder d')
+        ->leftJoin('d.Files f')
+        ->where('f.id = ?', $id);
+      $f = $q->fetchOne();
+      if (unlink($this->root . $f->path . ( $f->id == 0 ? '' : $f->name . '/') . $f->Files[0]->name)) {
+        $f->Files[0]->delete();
+        $this->response->success = true;
+      }
     }
     echo $this->response->toJson();
+  }
+  
+  function download() {
+    $data = json_decode($this->input->post('data'), true);
+    
   }
   
   function _read_dir($path = '/', $parent = 0) {
@@ -162,13 +225,42 @@ class Browser extends Controller {
           );
         }
         else {
+          // files
+          
+          $q = Doctrine_Query::create()
+            ->select('d.*, f.*')
+            ->from('Folder d')
+            ->leftJoin('d.Files f')
+            ->where('d.id = ?', $parent)
+            ->andWhere('f.name = ?', $file);
+          $result = $q->fetchOne();
+          
+          $f = null;
+          if (count($result['Files'])) {
+            $f = $result['Files'][0];
+          }
+          else {
+            $folder = Doctrine_Core::getTable('Folder')->find($parent);
+            $f = new File();
+            $f->name = $file;
+            $f->fid = $parent;
+            $f->description = '';
+            $f->save();
+            $folder->Files[] = $f;
+            $folder->save();
+          }
+          
+          
           $info = get_file_info($source_dir . $file, array('size'));
           $exts = explode('.', $file);
           $ext = $exts[count($exts) - 1];
           $filedata[] = array(
+            'fid' => $f->id * 1000000000,
             'name' => $file,
-            'type' => 'file',
             'ext' => $ext,
+            'type' => 'file',
+            'description' => $f->description,
+            'parent' => $parent,
             'size' => byte_format($info['size']),
             'icon' => 'file-' . $ext,
           );
