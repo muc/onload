@@ -10,8 +10,6 @@
  * @property string $password
  * @property string $email
  * @property boolean $admin
- * @property Doctrine_Collection $Folders
- * @property Doctrine_Collection $Folder
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
@@ -53,7 +51,7 @@ abstract class BaseUser extends Doctrine_Record
     public function setUp()
     {
         parent::setUp();
-        $this->actAs('Timestampable');
+        $timestampable0 = new Doctrine_Template_Timestampable();
+        $this->actAs($timestampable0);
     }
-    
 }

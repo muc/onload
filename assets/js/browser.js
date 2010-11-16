@@ -330,14 +330,28 @@ Ext.onReady(function() {
   });
   
   browserGrid.on('onDelete', function() {
-    
-    Ext.Msg.confirm('Delete', 'Are you sure to delete selected folders and files?', function(btn) {
-      if (btn == 'yes') {
-        var records = browserGrid.getSelectionModel().getSelections();
-        filesStore.remove(records);
+    var records = browserGrid.getSelectionModel().getSelections();
+    var bNotEmtpy = false;
+    Ext.each(records, function(rec) {
+      if (rec.get('files') > 0 || rec.get('folders') > 0) {
+        bNotEmtpy = true;
       }
     });
-    
+    if (bNotEmtpy) {
+      Ext.Msg.show({
+        title: 'Deletion not possible',
+        msg: 'You can not delete folders that are not empty!',
+        buttons: Ext.Msg.OK,
+        icon: Ext.Msg.WARNING
+      });
+    }
+    else {
+      Ext.Msg.confirm('Delete', 'Are you sure to delete selected folders and files?', function(btn) {
+        if (btn == 'yes') {
+          filesStore.remove(records);
+        }
+      });
+    }
   });
   
   var breadCrumb = new Ext.Toolbar({

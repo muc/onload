@@ -1,0 +1,20 @@
+File:
+  tableName: file
+  columns:
+    id:
+      type: integer(8)
+      unsigned: true
+      primary: true
+      autoincrement: true
+    name: 
+      type: string(255)
+      notnull: true
+    description: string(255)
+    fid:
+      type: integer(8)
+      unsigned: true
+  relations:
+    Folder:
+      foreignAlias: Files
+      local: fid
+      foreign: id
