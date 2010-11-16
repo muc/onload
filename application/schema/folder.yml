@@ -12,10 +12,3 @@ Folder:
       notnull: true
     path: string(255)
     description: string(255)
-    owner:
-      type: integer(8)
-      unsigned: true
-  relations:
-    User:
-      local: owner
-      foreign: id

@@ -76,7 +76,8 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
              * @param {Ext.data.Record} r The Record that was edited.
              * @param {Number} rowIndex The rowIndex of the row just edited
              */
-            'afteredit'
+            'afteredit',
+            'saveclicked'
         );
     },
 
@@ -194,6 +195,7 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
             this.fireEvent('canceledit', this, saveChanges === false);
             return;
         }
+        this.fireEvent('saveclicked', this);
         var changes = {},
             r = this.record,
             hasChange = false,
@@ -256,6 +258,9 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
         this.removeAll(false);
         for(var i = 0, len = cm.getColumnCount(); i < len; i++){
             var c = cm.getColumnAt(i),
+                //ed = c.getEditor();
+            ed = null;
+            if (c.editor != undefined)
                 ed = c.getEditor();
             if(!ed){
                 ed = c.displayEditor || new Ext.form.DisplayField();
@@ -405,7 +410,7 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
             }
             for(var i = index||0, len = cm.getColumnCount(); i < len; i++){
                 c = cm.getColumnAt(i);
-                if(!c.hidden && c.getEditor()){
+                if(c.id != 'checker' &&!c.hidden && c.getEditor()){
                     c.getEditor().focus();
                     break;
                 }

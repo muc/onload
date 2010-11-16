@@ -48,19 +48,11 @@ abstract class BaseFolder extends Doctrine_Record
              'type' => 'string',
              'length' => '255',
              ));
-        $this->hasColumn('owner', 'integer', 8, array(
-             'type' => 'integer',
-             'unsigned' => true,
-             'length' => '8',
-             ));
     }
 
     public function setUp()
     {
         parent::setUp();
         $this->actAs('Timestampable');
-        $this->hasOne('User', array(
-             'local' => 'owner',
-             'foreign' => 'id'));
     }
 }

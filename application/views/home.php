@@ -5,8 +5,8 @@
   <title><?php echo $title;?></title>
   <?php $this->load->view('extjs_header');?>
   <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/style.css" />
-  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ux/FolderForm.js"></script>
-  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ux/FolderWin.js"></script>
+  <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/js/ext/ux/roweditor/css/RowEditor.css" />
+  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ext/ux/roweditor/RowEditor.js"></script>
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ux/BrowserGrid.js"></script>
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/browser.js"></script>
   <!--<script type="text/javascript" src="<?php echo base_url(); ?>assets/js/onload.js"></script>-->

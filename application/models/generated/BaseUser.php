@@ -54,9 +54,6 @@ abstract class BaseUser extends Doctrine_Record
     {
         parent::setUp();
         $this->actAs('Timestampable');
-        $this->hasMany('Folder as Folders', array(
-             'local' => 'owner',
-             'foreign' => 'id'));
     }
     
 }

@@ -30,8 +30,93 @@ class Browser extends Controller {
     $this->response->success = true;
     $this->response->data = $result;
     $this->response->total = count($result);
-    echo $this->response->toJson();
+    echo json_encode(array(
+      'success' => true,
+      'total' => count($result),
+      'data' => $result
+    ));
+    //echo $this->response->toJson();
     
+  }
+  
+  function get_folder() {
+    $fid = $this->input->post('fid');
+    $folder = Doctrine_Core::getTable('Folder')->find($fid);
+    $result = $folder ? array('fid' => $folder->id, 'parent' => $folder->parent) : array('fid' => 0, 'parent' => 0);
+    echo json_encode($result);
+  }
+
+  function create_dir() {
+    $data = json_decode($this->input->post('data'), true);
+    $keys = array_keys($data);
+    if (!is_numeric($keys)) {
+      $data = $data[0];
+    }
+    // create new folder within folder.id = parent
+    $path = '/';
+    if ($data['parent']) {
+      $parent = Doctrine_Core::getTable('Folder')->find($data['parent']);
+      $path = $parent->path . $parent->name . '/';
+    }
+    if (mkdir($this->root . $path . $data['name'])) {
+      $folder = new Folder();
+      $folder->name = $data['name'];
+      $folder->parent = $data['parent'];
+      $folder->path = $path;
+      $folder->description = $data['description'];
+      $folder->save();
+      $this->response->success = true;
+      $this->response->data = array(
+        'fid' => $folder->id, 
+        'name' => $folder->name,
+        'type' => 'folder',
+        'path' => $folder->path,
+        'parent' => $folder->parent,
+        'description' => $folder->description,
+        'icon' => 'folder-icon',
+      );
+    }
+    else {
+      $this->response->success = false;
+      $this->response->message = 'Failed to create new folder ' . $name;
+    }
+    echo $this->response->toJson();
+  }
+
+  function update_dir() {
+    $data = json_decode($this->input->post('data'), true);
+    $id = $data['fid'];
+    unset($data['fid']);
+    $folder = Doctrine_Core::getTable('Folder')->find($id);
+    
+    if (array_key_exists('name', $data)) {
+      rename($this->root . $folder->path . $folder->name, $this->root . $folder->path . $data['name']);
+    }
+    foreach ($data as $key => $value) {
+      $folder->$key = $value;
+    }
+    $folder->save();
+    $this->response->success = true;
+    $this->response->data = array(
+      'fid' => $folder->id, 
+      'name' => $folder->name,
+      'type' => 'folder',
+      'path' => $folder->path,
+      'parent' => $folder->parent,
+      'description' => $folder->description,
+      'icon' => 'folder-icon',
+    );
+    echo $this->response->toJson();
+  }
+
+  function delete_dir() {
+    $id = json_decode($this->input->post('data'), true);
+    $folder = Doctrine_Core::getTable('Folder')->find($id);
+    if (rmdir($this->root . $folder->path . $folder->name)) {
+      $folder->delete();
+      $this->response->success = true;
+    }
+    echo $this->response->toJson();
   }
   
   function _read_dir($path = '/', $parent = 0) {
@@ -60,18 +145,19 @@ class Browser extends Controller {
             $folder->path = $path;
             $folder->parent = $parent;
             $folder->description = '';
-            $folder->owner = 1;
             $folder->save();
           }
           $files = get_dir_file_info($source_dir.$file.'/');
+          
           $folderdata[] = array(
             'name' => $file,
             'type' => 'folder',
             'path' => $path,
             'parent' => $parent,
             'description' => $folder->description,
-            'id' => $folder->id,
+            'fid' => $folder->id,
             'icon' => 'folder-icon',
+            'folders' => $this->_count_dirs($source_dir.$file.'/'),
             'files' => count($files)
           );
         }
@@ -98,36 +184,21 @@ class Browser extends Controller {
       return FALSE;
     }
   }
-  
-  function read_files($path = '/', $fid = 0) {
-    static $_filedata = array();
-    $source_dir = $this->root . $path;
 
+  function _count_dirs($source_dir) {
+    $count = 0;
     if ($fp = @opendir($source_dir)) {
-      // reset the array and make sure $source_dir has a trailing slash on the initial call
-      $_filedata = array();
-      $source_dir = rtrim(realpath($source_dir), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
-      if ($_recursion === FALSE)
-      {
-      }
-
-      while (FALSE !== ($file = readdir($fp)))
-      {
-        if (@is_dir($source_dir.$file) && strncmp($file, '.', 1) !== 0)
-        {
-           get_dir_file_info($source_dir.$file.DIRECTORY_SEPARATOR, $include_path, TRUE);
+      $source_dir = rtrim($source_dir, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+      while (FALSE !== ($file = readdir($fp))) {
+        if ((strncmp($file, '.', 1) == 0) OR ($file == '.' OR $file == '..')) {
+          continue;
         }
-        elseif (strncmp($file, '.', 1) !== 0)
-        {
-          $_filedata[$file] = get_file_info($source_dir.$file);
-          $_filedata[$file]['relative_path'] = $relative_path;
+        if (@is_dir($source_dir.$file)) {
+          $count++;
         }
       }
-      return $_filedata;
     }
-    else
-    {
-      return FALSE;
-    }
+    return $count;
   }
+  
 }

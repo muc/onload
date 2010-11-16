@@ -4,7 +4,7 @@ BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
   title: 'Files (sample data)',
   renderTo: 'content-panel',
   loadMask: true,
-  autoExpandColumn: 'descr',
+  autoExpandColumn: 'description',
   columnLines: true,
   width:940,
   autoHeight: true,
@@ -17,6 +17,11 @@ BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function() {
     this.tbar = this.buildToolBar();
     this.bbar = this.buildStatusBar();
+    this.addEvents(
+      'onNew',
+      'onEdit',
+      'onDelete'
+    );
     BrowserGrid.superclass.initComponent.call(this);
   },
   buildToolBar: function() {
@@ -28,6 +33,7 @@ BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
         style: 'margin-right: 5px;', 
         scope: this
       },
+      '-',
       { 
         ref: '../downloadBtn', 
         text: 'Download', 
@@ -36,20 +42,36 @@ BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
         disabled: true, 
         scope: this
       },
+      '-',
+      { 
+        ref: '../newBtn', 
+        text: 'new Folder', 
+        minWidth: 70, 
+        style: 'margin-right: 5px;',
+        iconCls: 'folder-add-icon',
+        handler: this.onNew,
+        scope: this
+      },
+      '-',
       { 
         ref: '../editBtn', 
         text: 'Edit', 
         minWidth: 70, 
         style: 'margin-right: 5px;', 
         disabled: true, 
+        iconCls: 'edit-icon',
+        handler: this.onEdit,
         scope: this
       },
+      '-',
       { 
         ref: '../deleteBtn', 
         text: 'Delete', 
         minWidth: 70, 
         style: 'margin-right: 5px;', 
+        iconCls: 'delete-icon',
         disabled: true, 
+        handler: this.onDelete,
         scope: this
       },
       '->',
@@ -58,6 +80,7 @@ BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
         text: 'Reload', 
         minWidth: 70, 
         style: 'margin-right: 5px;', 
+        iconCls: 'reload-icon',
         scope: this, 
         handler: this.onReload
       },
@@ -69,6 +92,18 @@ BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
       id: 'browserStatusBar',
       defaultText: 'Ready'
     });
+  },
+  
+  onNew: function() {
+    this.fireEvent('onNew');
+  },
+  
+  onEdit: function() {
+    this.fireEvent('onEdit');
+  },
+  
+  onDelete: function() {
+    this.fireEvent('onDelete');
   },
   
   onReload: function() {

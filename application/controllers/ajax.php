@@ -45,20 +45,6 @@ class Ajax extends Controller {
     echo $this->response->toJson();
   }
   
-  function files($action = '') {
-    $data2 = array(
-      'data' => array(
-        array('id' => 1, 'name' => 'Folder1', 'descr' => '', 'tags' => '', 'size' => '', 'perm' => 1, 'type' => 'folder', 'files' => 4),
-        array('id' => 2, 'name' => 'Folder2', 'descr' => '', 'tags' => '', 'size' => '', 'perm' => 2, 'type' => 'folder', 'files' => 9),
-        array('id' => 3, 'name' => 'Folder3', 'descr' => '', 'tags' => '', 'size' => '', 'perm' => 1, 'type' => 'folder', 'files' => 1),
-        array('id' => 4, 'name' => 'file1.pdf', 'descr' => '', 'tags' => '', 'size' => '', 'perm' => 3, 'type' => 'file'),
-        array('id' => 5, 'name' => 'file2.jpg', 'descr' => '', 'tags' => '', 'size' => '', 'perm' => 1, 'type' => 'file'),
-      ),
-      'total' => 5
-    );
-    echo json_encode($data2);
-  }
-  
   function users($action = 'view') {
     
     if (!$this->auth->isAdmin()) {
