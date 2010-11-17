@@ -40,6 +40,7 @@ BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
         minWidth: 70,
         tyle: 'margin-right: 5px;', 
         disabled: true, 
+        handler: this.onDownload,
         scope: this
       },
       '-',
@@ -104,6 +105,10 @@ BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
   
   onDelete: function() {
     this.fireEvent('onDelete');
+  },
+  
+  onDownload: function() {
+    this.fireEvent('onDownload');
   },
   
   onReload: function() {

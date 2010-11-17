@@ -6,6 +6,7 @@ class Browser extends Controller {
   
   function Browser() {
     parent::Controller();
+    $this->load->library('firephp');
     $this->load->library('response');
   }
   
@@ -35,8 +36,6 @@ class Browser extends Controller {
       'total' => count($result),
       'data' => $result
     ));
-    //echo $this->response->toJson();
-    
   }
   
   function get_folder() {
@@ -178,10 +177,57 @@ class Browser extends Controller {
   }
   
   function download() {
-    $data = json_decode($this->input->post('data'), true);
+    $this->load->helper('download');
+    $this->load->library('zip');
     
+    $count = $this->input->post('count');
+    $data = json_decode($this->input->post('data'), true);
+    if ($count == 1) {
+      $fid = $data['fid'];
+      $type = $data['type'];
+      $parent = $data['parent'];
+      
+      if ($type == 'file') {
+        $fid = $fid / 1000000000;
+        $q = Doctrine_Query::create()
+          ->from('Folder d')
+          ->leftJoin('d.Files f')
+          ->where('f.id = ?', $fid);
+        $f = $q->fetchOne();
+        
+        $path = $this->root . $f->path . ( $f->id == 0 ? '' : $f->name . '/') . $f->Files[0]->name;
+        force_download($f->Files[0]->name, file_get_contents($path));
+      }
+      else if ($type == 'folder') {
+        $folder = Doctrine_Core::getTable('Folder')->find($fid);
+        $this->_zip_dir($folder->path, $folder->name);
+        $this->zip->download($folder->name);
+      }
+    }
+    else if ($count > 1) {
+      // get parent folder.
+      // should be the same on every $data entity, so grab it from $data[0]
+      $parent = Doctrine_Core::getTable('Folder')->find($data[0]['parent']);
+      $source_path = $this->root . $parent->path. ( $parent->id == 0 ? '' : $parent->name . '/');
+      
+      foreach ($data as $rec) {
+        $fid = $rec['fid'];
+        $type = $rec['type'];
+        if ($type == 'file') {
+          $fid = $fid / 1000000000;
+          $file = Doctrine_Core::getTable('File')->find($fid);
+          $file_content = file_get_contents($source_path . $file->name);
+          $this->zip->add_data($file->name, $file_content);
+        }
+        else if ($type == 'folder') {
+          $folder = Doctrine_Core::getTable('Folder')->find($fid);
+          $this->_zip_dir($folder->path, $folder->name);
+        }
+      }
+      $this->zip->download($parent->id == 0 ? 'onload' : $parent->name);
+    }
   }
-  
+
   function _read_dir($path = '/', $parent = 0) {
     $source_dir = $this->root . $path;
     if ($fp = @opendir($source_dir)) {
@@ -291,6 +337,25 @@ class Browser extends Controller {
       }
     }
     return $count;
+  }
+  
+  function _zip_dir($path, $name) {
+    $source_path = $this->root . $path . $name . '/';
+    $this->zip->add_dir($name);
+    
+    if ($fp = @opendir($source_path)) {
+      while (FALSE !== ($file = readdir($fp))) {
+        if (@is_dir($source_path.$file) && substr($file, 0, 1) != '.') {
+          $this->_zip_dir($path.$name.'/', $name.'/'.$file);
+        }
+        elseif (substr($file, 0, 1) != ".") {
+          if (FALSE !== ($data = file_get_contents($source_path.$file))) {
+            $this->zip->add_data(str_replace("\\", "/", $name.'/').$file, $data);
+          }
+        }
+      }
+    return TRUE;
+    }
   }
   
 }

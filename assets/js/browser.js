@@ -354,6 +354,33 @@ Ext.onReady(function() {
     }
   });
   
+  browserGrid.on('onDownload', function() {
+    var records = browserGrid.getSelectionModel().getSelections();
+    var data = null;
+    
+    if (records.length == 1) {
+      var record = records[0];
+      data = {
+        fid: record.get('fid'), 
+        type: record.get('type'),
+        parent: record.get('parent')
+      };
+    }
+    else if (records.length > 1) {
+      data = new Array();
+      Ext.each(records, function(record) {
+        data.push({
+          fid: record.get('fid'), 
+          type: record.get('type'),
+          parent: record.get('parent')
+        });
+      });
+    }
+    Ext.get('count').dom.value = records.length;
+    Ext.get('data').dom.value = Ext.util.JSON.encode(data);
+    $('#dlform').submit();
+  });
+  
   var breadCrumb = new Ext.Toolbar({
     id: 'breadCrumb',
     renderTo: browserGrid.tbar,

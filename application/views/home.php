@@ -6,6 +6,7 @@
   <?php $this->load->view('extjs_header');?>
   <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/style.css" />
   <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/js/ext/ux/roweditor/css/RowEditor.css" />
+  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery.js"></script>
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ext/ux/roweditor/RowEditor.js"></script>
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ux/BrowserGrid.js"></script>
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/browser.js"></script>
@@ -30,6 +31,10 @@
   <section>
     <div id="content-panel"></div>
   </section>
+  <form id="dlform" method="POST" action="browser/download">
+    <input type="hidden" id="count" name="count"/>
+    <input type="hidden" id="data" name="data" />
+  </form>
 
 </body>
 </html>
