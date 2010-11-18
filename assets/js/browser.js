@@ -409,6 +409,22 @@ Ext.onReady(function() {
     defaultType: 'tbtext',
   });
   
+  /*
+   * Event when logout is clicked
+   * redirect to /logout with animations
+   */
+  Ext.get('a-logout').on('click', function() {
+    Ext.select('header').slideOut('r');
+    Ext.select('nav').slideOut('l', {callback: function() {
+      Ext.get('content-panel').switchOff({
+        duration: 0.3,
+        callback: function() {
+          window.location = 'logout';
+        }
+      });
+    }});
+  });
+  
   buildBreadCrumb();
 
 });
