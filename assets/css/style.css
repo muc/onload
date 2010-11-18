@@ -65,9 +65,10 @@ nav ul li {
 nav ul li a {
   	display: block;
   	outline: 0;
-  	margin: 3px 6px 3px 0;
-  	padding: 2px 6px 4px 6px;
-	height: 18px;
+  	margin: 5px 6px 5px 0;
+  	padding: 0 6px 6px 6px;
+	height: 14px;
+	font-size: 11px;
   	text-decoration: none;
 	background-image: url(../img/menu_button_bg.jpg);
   	color: #fff;
