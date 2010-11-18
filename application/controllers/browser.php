@@ -76,7 +76,7 @@ class Browser extends Controller {
         'path' => $folder->path,
         'parent' => $folder->parent,
         'description' => $folder->description,
-        'icon' => 'folder-icon',
+        'icon' => 'folder',
       );
     }
     else {
@@ -109,7 +109,7 @@ class Browser extends Controller {
         'path' => $folder->path,
         'parent' => $folder->parent,
         'description' => $folder->description,
-        'icon' => 'folder-icon',
+        'icon' => 'folder',
       );
     }
     else {
@@ -275,7 +275,7 @@ class Browser extends Controller {
             'description' => $folder->description,
             'fid' => $folder->id,
             'perm' => $folder->ptid,
-            'icon' => 'folder-icon',
+            'icon' => 'folder',
             'folders' => $this->_count_dirs($source_dir.$file.'/'),
             'files' => count($files)
           );
