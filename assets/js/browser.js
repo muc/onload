@@ -107,7 +107,7 @@ Ext.onReady(function() {
       success: function(result, request) {
         var data = Ext.util.JSON.decode(result.responseText);
         filesStore.insert(0, new FileRec({
-          name: '.. übergeordneter Ordner',
+          name: 'parent folder',
           type: 'parent',
           fid: data.fid,
           parent: data.parent,
@@ -151,7 +151,7 @@ Ext.onReady(function() {
             + ' <span style="color:#bbb;">' + sub_info + '</span></div>';
     }
     else if (record.get('type') == 'parent') {
-      return '<a href="#" style="color:#bbb;">' + value + '</a>';
+      return '<div class="folder-up-link">' + value + '</div>';
     }
     else if (record.get('type') == 'file'){
       
@@ -288,6 +288,22 @@ Ext.onReady(function() {
     });
     breadCrumb.doLayout();
     
+    Ext.select('a.bc-home').on('click', function(e, t, o) {
+      var id = e.getTarget('', 1, true).id.split('-')[3];
+      var n = 0;
+      Ext.each(breadCrumbObj, function(item) {
+        if (item && item.fid == id) {
+          changeDir(new FileRec({
+            name: item.name,
+            fid: item.fid,
+            parent: item.parent,
+            type: 'folder'
+          }), n);
+          return;
+        }
+        n++;
+      });
+    });
     Ext.select('a.bc-folder').on('click', function(e, t, o) {
       var id = e.getTarget('', 1, true).id.split('-')[3];
       var n = 0;
