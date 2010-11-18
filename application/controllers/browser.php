@@ -2,12 +2,16 @@
 
 class Browser extends Controller {
     
-  public $root = '../files';
+  private $root = '../files';
+  private $onload_cfg;
   
   function Browser() {
     parent::Controller();
     $this->load->library('firephp');
     $this->load->library('response');
+    $this->config->load('onload', TRUE);
+    $this->onload_cfg = $this->config->item('onload');
+    $this->root = $this->onload_cfg['root'];
   }
   
   function get_dir() {
