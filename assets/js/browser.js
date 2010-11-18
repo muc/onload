@@ -147,7 +147,6 @@ Ext.onReady(function() {
               record.get('folders') > 0 ? folders_info : files_info;
       
       return ' <div class="folder-link">' 
-            + img 
             + ' ' + value + '&nbsp;&nbsp;&nbsp;' 
             + ' <span style="color:#bbb;">' + sub_info + '</span></div>';
     }
@@ -281,7 +280,7 @@ Ext.onReady(function() {
       var bc_id = ' id="bc-folder-link-'+ item.fid + '"';
       var bc_img_id = ' id="bc-folder-img-'+ item.fid + '"';
       
-      bcPath.push('<a' + bc_id + bc_class +' href="#"><img' + bc_img_id + ' src="assets/img/' + item.icon + '"/> ' + item.name + '</a>');
+      bcPath.push('<a' + bc_id + bc_class +' href="#"> ' + item.name + '</a>');
     });
     breadCrumb.add({
       xtype: 'tbtext',
