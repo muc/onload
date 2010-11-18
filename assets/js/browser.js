@@ -352,6 +352,7 @@ Ext.onReady(function() {
       Ext.Msg.confirm('Delete', 'Are you sure to delete selected folders and files?', function(btn) {
         if (btn == 'yes') {
           filesStore.remove(records);
+          filesStore.reload();
         }
       });
     }
