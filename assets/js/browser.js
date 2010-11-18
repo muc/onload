@@ -39,7 +39,7 @@ Ext.onReady(function() {
       name: 'Home',
       fid: 0,
       parent: 0,
-      icon: 'home.png'
+      icon: 'bc-home'
     }
   );
   
@@ -262,7 +262,7 @@ Ext.onReady(function() {
           name  : dir.get('name'),
           fid   : dir.get('fid'),
           parent: dir.get('parent'),
-          icon  : 'folder.gif'
+          icon  : 'bc-folder'
         });
       }
       if (dir.get('type') == 'parent') {
@@ -276,11 +276,11 @@ Ext.onReady(function() {
     breadCrumb.removeAll();
     var bcPath = new Array();
     Ext.each(breadCrumbObj, function(item) {
-      var bc_class = ' class="bc-folder"';
+      var bc_class = ' class=' + item.icon;
       var bc_id = ' id="bc-folder-link-'+ item.fid + '"';
       var bc_img_id = ' id="bc-folder-img-'+ item.fid + '"';
       
-      bcPath.push('<a' + bc_id + bc_class +' href="#"> ' + item.name + '</a>');
+      bcPath.push('<a' + bc_id + bc_class +' href="#">' + item.name + '</a>');
     });
     breadCrumb.add({
       xtype: 'tbtext',

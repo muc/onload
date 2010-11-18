@@ -96,7 +96,7 @@ a:hover {
 	vertical-align: center;
 }
 
-.bc-folder {
+.bc-home {
 	background-image: url(../img/home.png);
 	background-repeat: no-repeat;
 	padding: 2px 0 0 20px;
@@ -104,3 +104,10 @@ a:hover {
 	vertical-align: center;
 }
 
+.bc-folder {
+	background-image: url(../img/folder.gif);
+	background-repeat: no-repeat;
+	padding: 2px 0 0 20px;
+	height: 16px;
+	vertical-align: center;
+}
