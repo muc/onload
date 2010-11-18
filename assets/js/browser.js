@@ -27,6 +27,7 @@ Ext.onReady(function() {
   var bNew = false;
   var bNewIdx = 0;
   var curFid = 0;
+  var isAdmin = typeof(_isAdmin) != 'undefined';
   var curFolder = new FileRec({
     fid: 0,
     parent: 0,
@@ -115,18 +116,6 @@ Ext.onReady(function() {
     });
   }
   
-  var permissionTypeStore = new Ext.data.ArrayStore({
-    fields: [
-      'pid',
-      'perm'
-    ],
-    data: [
-      [1, 'public'],
-      [2, 'shared'],
-      [3, 'private'],
-    ]
-  });
-  
   var sm = new Ext.grid.CheckboxSelectionModel({
     renderer: function(value, meta, record, rowIndex, colIndex, store) {
       if (record.get('type') != 'parent') {
@@ -165,10 +154,24 @@ Ext.onReady(function() {
     else if (record.get('type') == 'parent') {
       return '<a href="#" style="color:#bbb;">' + value + '</a>';
     }
-    else {
+    else if (record.get('type') == 'file'){
+      
       return value;
     }
   }
+  
+  function renderPermission(value, meta, record, rowIndex, colIndex, store) {
+    if (value == 1) {
+      return '<img src="assets/img/private.png"/>';
+    }
+    if (value == 2) {
+      return '<img src="assets/img/group.png"/>';
+    }
+    if (value == 3) {
+      return '<img src="assets/img/public.png"/>';
+    }
+  }
+  
   var editor = new Ext.ux.grid.RowEditor({
     saveText: 'Save',
     clicksToEdit: 2,
@@ -226,7 +229,7 @@ Ext.onReady(function() {
         {id: 'description', header: 'Description', dataIndex: 'description', editor: {xtype: 'textfield'}},
         {header: 'Tags', width: 200, dataIndex: 'tags', editor: {xtype: 'textfield'}},
         {header: 'Size', width: 100, dataIndex: 'size', editable: false},
-        {header: 'Perm', width: 50, dataIndex: 'perm', editor: {xtype: 'combo'}},
+        {header: 'Perm', width: 50, dataIndex: 'perm', renderer: renderPermission, editable: false},
       ]
     }),
     sm: sm,
@@ -379,6 +382,25 @@ Ext.onReady(function() {
     Ext.get('count').dom.value = records.length;
     Ext.get('data').dom.value = Ext.util.JSON.encode(data);
     $('#dlform').submit();
+  });
+  
+  /**
+   * Test Button
+   * To get quick access to functionality for testing purposes
+   * @todo remove when done with development! :)
+   */
+  browserGrid.on('onPermission', function() {
+    var pw = new PermissionWin({});
+    pw.loadFolder({
+      ptype: 3,
+      pusers: [
+        {username: 'Hans', write: true}
+      ] 
+    });
+    pw.show();
+    pw.on('save', function() {
+      console.info('Event: pw saved');
+    });
   });
   
   var breadCrumb = new Ext.Toolbar({

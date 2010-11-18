@@ -7,13 +7,18 @@
   <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/style.css" />
   <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/js/ext/ux/roweditor/css/RowEditor.css" />
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery.js"></script>
+  
+  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ux/PermissionWin.js"></script>
+  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ux/permissionStores.js"></script>
+  
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ext/ux/roweditor/RowEditor.js"></script>
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ux/BrowserGrid.js"></script>
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/browser.js"></script>
-  <!--<script type="text/javascript" src="<?php echo base_url(); ?>assets/js/onload.js"></script>-->
 </head>
 <body>
-
+  <?php if ($user->admin): ?>
+    <script>var _isAdmin = true;</script>
+  <?php endif; ?>
   <header>
     <h1>ON.load</h1>
   </header>

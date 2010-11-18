@@ -1,0 +1,15 @@
+PermissionType:
+  tableName: permission_type
+  columns:
+    ptid:
+      type: integer(1)
+      unsigned: true
+      primary: true
+      autoincrement: true
+    name: string(20)
+  relations:
+    Folder:
+      type: many
+      class: Folder
+      local: ptid
+      foreign: ptid

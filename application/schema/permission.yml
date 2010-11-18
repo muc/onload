@@ -1,0 +1,15 @@
+Permission:
+  tableName: permission
+  columns:
+    user_id:
+      type: integer(8)
+      primary: true
+    folder_id:
+      type: integer(8)
+      primary: true
+    upload: boolean
+  relations:
+    Folder:
+      foreignAlias: Permissions
+    User:
+      foreignAlias: Permissions

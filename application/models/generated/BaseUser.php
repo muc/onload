@@ -10,6 +10,8 @@
  * @property string $password
  * @property string $email
  * @property boolean $admin
+ * @property Doctrine_Collection $Folders
+ * @property Doctrine_Collection $Permissions
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
@@ -51,6 +53,15 @@ abstract class BaseUser extends Doctrine_Record
     public function setUp()
     {
         parent::setUp();
+        $this->hasMany('Folder as Folders', array(
+             'refClass' => 'Permission',
+             'local' => 'user_id',
+             'foreign' => 'folder_id'));
+
+        $this->hasMany('Permission as Permissions', array(
+             'local' => 'id',
+             'foreign' => 'user_id'));
+
         $timestampable0 = new Doctrine_Template_Timestampable();
         $this->actAs($timestampable0);
     }

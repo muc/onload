@@ -258,6 +258,11 @@ class Browser extends Controller {
           }
           $files = get_dir_file_info($source_dir.$file.'/');
           
+          // check permission
+          // is Admin
+          // not Admin && ptid == 3 (public)
+          // not Admin && ptid == 2 && permission fid and uid set.
+          
           $folderdata[] = array(
             'name' => $file,
             'type' => 'folder',
@@ -265,6 +270,7 @@ class Browser extends Controller {
             'parent' => $parent,
             'description' => $folder->description,
             'fid' => $folder->id,
+            'perm' => $folder->ptid,
             'icon' => 'folder-icon',
             'folders' => $this->_count_dirs($source_dir.$file.'/'),
             'files' => count($files)
@@ -295,7 +301,6 @@ class Browser extends Controller {
             $folder->Files[] = $f;
             $folder->save();
           }
-          
           
           $info = get_file_info($source_dir . $file, array('size'));
           $exts = explode('.', $file);

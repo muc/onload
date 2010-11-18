@@ -12,3 +12,15 @@ Folder:
       notnull: true
     path: string(255)
     description: string(255)
+    ptid: 
+      type: integer(1)
+      default: 1
+  relations:
+    PermissionType:
+      local: ptid
+      foreign: ptid
+    Users:
+      foreignAlias: Folders
+      class: User
+      refClass: Permission
+      

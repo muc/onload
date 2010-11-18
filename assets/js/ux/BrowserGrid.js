@@ -20,7 +20,9 @@ BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
     this.addEvents(
       'onNew',
       'onEdit',
-      'onDelete'
+      'onDelete',
+      'onDownload',
+      'onPermission'
     );
     BrowserGrid.superclass.initComponent.call(this);
   },
@@ -63,6 +65,15 @@ BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
         iconCls: 'edit-icon',
         handler: this.onEdit,
         scope: this
+      },
+      '-',
+      { 
+        ref: '../permBtn', 
+        text: 'Folder Permission', 
+        minWidth: 70, 
+        style: 'margin-right: 5px;', 
+        scope: this, 
+        handler: this.onPermission
       },
       '-',
       { 
@@ -109,6 +120,10 @@ BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
   
   onDownload: function() {
     this.fireEvent('onDownload');
+  },
+  
+  onPermission: function() {
+    this.fireEvent('onPermission');
   },
   
   onReload: function() {

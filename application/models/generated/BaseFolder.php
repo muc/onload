@@ -10,7 +10,11 @@
  * @property string $name
  * @property string $path
  * @property string $description
+ * @property integer $ptid
+ * @property PermissionType $PermissionType
+ * @property Doctrine_Collection $Users
  * @property Doctrine_Collection $Files
+ * @property Doctrine_Collection $Permissions
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
@@ -46,13 +50,31 @@ abstract class BaseFolder extends Doctrine_Record
              'type' => 'string',
              'length' => '255',
              ));
+        $this->hasColumn('ptid', 'integer', 1, array(
+             'type' => 'integer',
+             'default' => 1,
+             'length' => '1',
+             ));
     }
 
     public function setUp()
     {
         parent::setUp();
+        $this->hasOne('PermissionType', array(
+             'local' => 'ptid',
+             'foreign' => 'ptid'));
+
+        $this->hasMany('User as Users', array(
+             'refClass' => 'Permission',
+             'local' => 'folder_id',
+             'foreign' => 'user_id'));
+
         $this->hasMany('File as Files', array(
              'local' => 'id',
              'foreign' => 'fid'));
+
+        $this->hasMany('Permission as Permissions', array(
+             'local' => 'id',
+             'foreign' => 'folder_id'));
     }
 }
