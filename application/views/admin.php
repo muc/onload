@@ -11,22 +11,29 @@
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/admin.js"></script>
 </head>
 <body>
+  	<div id="sitewrapper">
 
-  <header>
-    <h1>ON.load</h1>
-  </header>
-  
-  <nav>
-    <ul>
-      <li><a id="a-logout" href="#">Logout</a></li>
-      <li><a href="#">Change Password</a></li>
-      <li><a id="a-admin" href="..">File Browser</a></li>
-    </ul>
-  </nav>
-  
-  <section>
-    <div id="content-panel"></div>
-  </section>
+		<header>
+			<div id="logo"><a href="/"><img src="/assets/img/logo.png" border="0"></a></div>
+		</header>
+
+		<nav>
+			<ul>
+				<li><a id="a-logout" href="#">Logout</a></li>
+				<li><a href="#">Change Password</a></li>
+				<li><a id="a-admin" href="..">File Browser</a></li>
+			</ul>
+		</nav>
+		
+		<div id="contentwrapper">
+
+		<section>
+			<div id="content-panel"></div>
+		</section>
+		
+		</div>
+	
+	</div>
 
 </body>
 </html>

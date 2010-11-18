@@ -9,6 +9,14 @@
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/login.js"></script>
 </head>
 <body>
-<div id="login-form" style="width: 300px; margin: 100px auto;"></div>
+  	<div id="sitewrapper">
+
+		<header>
+			<div id="logo"><a href="/"><img src="/assets/img/logo.png" border="0"></a></div>
+		</header>
+	
+		<div id="login-form" style="width: 300px; margin: 100px auto;"></div>
+	
+	</div>
 </body>
 </html>
