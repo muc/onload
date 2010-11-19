@@ -72,6 +72,7 @@ BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
         text: 'Folder Permission', 
         minWidth: 70, 
         style: 'margin-right: 5px;', 
+        disabled: true,
         scope: this, 
         handler: this.onPermission
       },

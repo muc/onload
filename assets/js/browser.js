@@ -127,9 +127,14 @@ Ext.onReady(function() {
         if (filesStore.getCount() > 0 && filesStore.getAt(0).get('type') == 'parent' && this.isSelected(0)) {
           this.deselectRow(0);
         }
+        
+        var isFolder = this.hasSelection() ?
+          (this.getSelected().get('type') == 'folder' ? true : false) : false;
+        
         browserGrid.downloadBtn.setDisabled(this.getCount() < 1);
         browserGrid.editBtn.setDisabled(this.getCount() != 1);
         browserGrid.deleteBtn.setDisabled(this.getCount() < 1);
+        browserGrid.permBtn.setDisabled(isFolder ? (this.getCount() != 1 ? true : false) : true);
       }
     }
   });
@@ -406,15 +411,37 @@ Ext.onReady(function() {
    */
   browserGrid.on('onPermission', function() {
     var pw = new PermissionWin({});
-    pw.loadFolder({
-      ptype: 3,
-      pusers: [
-        {username: 'Hans', write: true}
-      ] 
+    var selFolder = browserGrid.getSelectionModel().getSelected();
+    pw.loadData({
+      ptype: selFolder.get('perm'),
+      fid: selFolder.get('fid'),
     });
     pw.show();
-    pw.on('save', function() {
-      console.info('Event: pw saved');
+    pw.on('save', function(ptid, pu_store) {
+      var folder = filesStore.getById(selFolder.get('fid'));
+      folder.set('perm', ptid);
+      
+      var data = new Array();
+      var jsonDataEncode = "";
+      var records = pu_store.getRange();
+      Ext.each(records, function(r) {
+        data.push(r.data);
+      });
+      jsonDataEncode = Ext.util.JSON.encode(data);
+      
+      Ext.Ajax.request({
+        url: 'permissions/update',
+        method: 'post',
+        params: {
+          fid: selFolder.get('fid'),
+          data: jsonDataEncode
+        },
+        success: function() {
+          pu_store.removeAll();
+          pu_store.commitChanges();
+        }
+      });
+      
     });
   });
   

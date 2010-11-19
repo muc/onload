@@ -97,6 +97,11 @@ class Browser extends Controller {
       if (array_key_exists('name', $data)) {
         rename($this->root . $folder->path . $folder->name, $this->root . $folder->path . $data['name']);
       }
+      
+      if (array_key_exists('perm', $data)) {
+        $data['ptid'] = $data['perm'];
+        unset($data['perm']);
+      }
       foreach ($data as $key => $value) {
         $folder->$key = $value;
       }
@@ -108,6 +113,7 @@ class Browser extends Controller {
         'type' => 'folder',
         'path' => $folder->path,
         'parent' => $folder->parent,
+        'perm' => $folder->ptid,
         'description' => $folder->description,
         'icon' => 'folder',
       );

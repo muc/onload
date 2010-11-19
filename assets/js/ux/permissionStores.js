@@ -2,7 +2,7 @@
 var pTypeStore = new Ext.data.JsonStore({
   root: 'data',
   proxy: new Ext.data.HttpProxy({
-    url: 'permission/permtype',
+    url: 'permissions/permtype',
     method: 'POST',
   }),
   fields: [
@@ -11,14 +11,6 @@ var pTypeStore = new Ext.data.JsonStore({
   ],
   storeId: 'pTypeStore',
   autoLoad: true
-  
-/*  
-  reader: new Ext.data.JsonReader({
-    idProperty: 'ptid',
-    successProperty: 'success',
-  }),
-  autoSave: false,
-  */
 });
 
 var pfStore = new Ext.data.JsonStore({
@@ -28,11 +20,45 @@ var pfStore = new Ext.data.JsonStore({
     idProperty: 'uid',
     successProperty: 'success',
   }),
+  fields: [
+    {name: 'uid', type: 'int'},
+    {name: 'username'},
+    {name: 'upload'},
+  ],
   proxy: new Ext.data.HttpProxy({
-    url: 'permission/fusers',
+    url: 'permissions/fusers',
     method: 'POST',
   }),
+  root: 'data',
   storeId: 'pfStore',
   autoSave: false,
-  autoLoad: true
+  autoLoad: false,
+});
+
+var ppStore = new Ext.data.JsonStore({
+  reader: new Ext.data.JsonReader({
+    totalProperty: 'total',
+    root: 'data',
+    idProperty: 'uid',
+    successProperty: 'success',
+  }),
+  fields: [
+    {name: 'uid', type: 'int'},
+    {name: 'username'},
+    {name: 'upload'},
+  ],
+  proxy: new Ext.data.HttpProxy({
+    url: 'permissions/pusers',
+    method: 'POST',
+  }),
+  root: 'data',
+  storeId: 'ppStore',
+  autoSave: false,
+  autoLoad: false,
+  listeners: {
+    update: function(store, record, operation) {
+      console.log(operation);
+      record.modified['upload'] = undefined;
+    }
+  }
 });
