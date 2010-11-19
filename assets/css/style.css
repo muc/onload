@@ -145,3 +145,86 @@ a:hover {
 	height: 16px;
 	vertical-align: center;
 }
+
+/* File icons */
+
+.file-default {
+	background-image: url(../img/file_default.png);
+	background-repeat: no-repeat;
+	padding: 2px 0 0 20px;
+	height: 16px;
+	vertical-align: center;
+}
+
+.file-txt {
+	background-image: url(../img/file_text.png);
+	background-repeat: no-repeat;
+	padding: 2px 0 0 20px;
+	height: 16px;
+	vertical-align: center;
+}
+
+.file-pdf {
+	background-image: url(../img/file_pdf.png);
+	background-repeat: no-repeat;
+	padding: 2px 0 0 20px;
+	height: 16px;
+	vertical-align: center;
+}
+
+.file-zip {
+	background-image: url(../img/file_zip.png);
+	background-repeat: no-repeat;
+	padding: 2px 0 0 20px;
+	height: 16px;
+	vertical-align: center;
+}
+
+.file-word {
+	background-image: url(../img/file_word.png);
+	background-repeat: no-repeat;
+	padding: 2px 0 0 20px;
+	height: 16px;
+	vertical-align: center;
+}
+
+.file-excel {
+	background-image: url(../img/file_excel.png);
+	background-repeat: no-repeat;
+	padding: 2px 0 0 20px;
+	height: 16px;
+	vertical-align: center;
+}
+
+.file-powerpoint {
+	background-image: url(../img/file_powerpoint.png);
+	background-repeat: no-repeat;
+	padding: 2px 0 0 20px;
+	height: 16px;
+	vertical-align: center;
+}
+
+.file-html {
+	background-image: url(../img/file_html.png);
+	background-repeat: no-repeat;
+	padding: 2px 0 0 20px;
+	height: 16px;
+	vertical-align: center;
+}
+
+.file-php {
+	background-image: url(../img/file_php.png);
+	background-repeat: no-repeat;
+	padding: 2px 0 0 20px;
+	height: 16px;
+	vertical-align: center;
+}
+
+.file-picture {
+	background-image: url(../img/file_php.png);
+	background-repeat: no-repeat;
+	padding: 2px 0 0 20px;
+	height: 16px;
+	vertical-align: center;
+}
+

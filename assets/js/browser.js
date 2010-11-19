@@ -154,8 +154,7 @@ Ext.onReady(function() {
       return '<div class="folder-up-link">' + value + '</div>';
     }
     else if (record.get('type') == 'file'){
-      
-      return value;
+      return '<div class="' + record.get('icon') + '">' + value + '</div>';
     }
   }
   

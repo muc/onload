@@ -135,6 +135,9 @@ class Browser extends Controller {
         $info = get_file_info($path . $f->Files[0]->name, array('size'));
         $exts = explode('.', $f->Files[0]->name);
         $ext = $exts[count($exts) - 1];
+        $icon = array_key_exists($ext, $this->onload_cfg['file_icons']) 
+              ? $this->onload_cfg['file_icons'][$ext] 
+              : $this->onload_cfg['file_icons']['default'];
         
         $this->response->success = true;
         $this->response->data = array(
@@ -145,7 +148,7 @@ class Browser extends Controller {
           'description' => $f->Files[0]->description,
           'parent' => $f->id,
           'size' => byte_format($info['size']),
-          'icon' => 'file-' . $ext, 
+          'icon' => $icon, 
         );
       }
     }
@@ -309,6 +312,11 @@ class Browser extends Controller {
           $info = get_file_info($source_dir . $file, array('size'));
           $exts = explode('.', $file);
           $ext = $exts[count($exts) - 1];
+
+          $icon = array_key_exists($ext, $this->onload_cfg['file_icons']) 
+              ? $this->onload_cfg['file_icons'][$ext] 
+              : $this->onload_cfg['file_icons']['default'];
+          
           $filedata[] = array(
             'fid' => $f->id * 1000000000,
             'name' => $file,
@@ -317,7 +325,7 @@ class Browser extends Controller {
             'description' => $f->description,
             'parent' => $parent,
             'size' => byte_format($info['size']),
-            'icon' => 'file-' . $ext,
+            'icon' => $icon,
           );
         }
       }
