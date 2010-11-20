@@ -22,7 +22,8 @@ Ext.onReady(function() {
       defaultText: 'Ready',
     })
   });
-  
+ 
+
   function doLogin() {
     Ext.getCmp('loginForm').on({
       beforeaction: function() {
@@ -52,10 +53,6 @@ Ext.onReady(function() {
   };
   
   Ext.getCmp('loginBtn').on('click', function() {
-    doLogin();
-  });
-  
-  loginForm.on('enterkey_pressed', function() {
     doLogin();
   });
   
