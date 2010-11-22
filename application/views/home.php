@@ -8,6 +8,7 @@
   <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/js/ext/ux/roweditor/css/RowEditor.css" />
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery.js"></script>
   
+  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ux/ChangePasswordWin.js"></script>
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ux/PermissionWin.js"></script>
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ux/permissionStores.js"></script>
   
@@ -29,7 +30,7 @@
 		<nav>
 			<ul>
 				<li><a id="a-logout" href="#">Logout</a></li>
-				<li><a href="#">Change Password</a></li>
+				<li><a id="a-change-pass" href="#">Change Password</a></li>
 				<?php if ($user->admin): ?>
 					<li><a id="a-admin" href="admin">Admin</a></li>
 				<?php endif; ?>

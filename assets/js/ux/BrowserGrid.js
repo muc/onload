@@ -1,7 +1,7 @@
 
 BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
   id: 'browserGrid',
-  title: 'Files (sample data)',
+  title: 'File Browser',
   renderTo: 'content-panel',
   loadMask: true,
   autoExpandColumn: 'description',

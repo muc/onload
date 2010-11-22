@@ -43,6 +43,25 @@ class Ajax extends Controller {
     echo $this->response->toJson();
   }
   
+  function changepassword() {
+    if (!($this->input->post('new_password') && $this->input->post('cnew_password'))) {
+      $this->response->success = false;
+      return json_encode(array('success' => false));
+    }
+    if (!$this->auth->isLoggedIn()) {
+      $this->response->success = false;
+      $this->response->message = 'No logged in user found.';
+    }
+    if (($this->input->post('new_password') != $this->input->post('cnew_password'))) {
+      $this->response->success = false;
+    }
+    $user = $this->auth->currentUser();
+    $user->password = $this->input->post('new_password');
+    $user->save();
+    $this->response->success = true;
+    echo $this->response->toJson();
+  }
+  
   function currentuser() {
     if (!$this->auth->isLoggedIn()) {
       $this->response->success = false;

@@ -232,12 +232,12 @@ Ext.onReady(function() {
     }
     else {
       userStore.add(new userStore.recordType(userForm.getForm().getValues()));
-      doReloadUserGrid();
     }
+    userStore.reload();
     setUserFormDisabled(true);
     adminGrid.setDisabled(false);
-    //adminGrid.getView().refresh();
-    adminGrid.getSelectionModel().selectRecords(lastSelection);
+    userForm.getForm().loadRecord(curRecord);
+    //adminGrid.getSelectionModel().selectRecords(lastSelection);
   });
   
   userForm.cancelBtn.on('click', function() {

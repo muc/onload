@@ -467,6 +467,18 @@ Ext.onReady(function() {
     }});
   });
   
+  /*
+   * Event when 'Change Password' is clicked
+   * Shows a Window with input fields for a new password.
+   */
+  Ext.get('a-change-pass').on('click', function() {
+    var cpWin = new ChangePasswordWin({
+      
+    });
+    cpWin.show();
+  });
+  
+  
   buildBreadCrumb();
 
 });
