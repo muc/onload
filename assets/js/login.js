@@ -12,10 +12,20 @@ Ext.onReady(function() {
     }]
   });
   
+  var fpForm = new ForgotPasswordForm({
+    url: 'ajax/forgotpassword',
+    keys: [{
+      key: [Ext.EventObject.ENTER],
+      fn: doGetNewPassword
+    }]
+  });
+  
   var loginPanel = new Ext.Panel({
     id: 'loginPanel',
     border: true,
-    items: [loginForm],
+    layout: 'card',
+    activeItem: 0,
+    items: [loginForm, fpForm],
     renderTo: 'login-form',
     bbar: new Ext.ux.StatusBar({
       id: 'statusBar',
@@ -52,12 +62,58 @@ Ext.onReady(function() {
     });
   };
   
+  function doGetNewPassword() {
+    Ext.getCmp('fpForm').on({
+      beforeaction: function() {
+        if (Ext.getCmp('fpForm').getForm().isValid()) {
+          Ext.getCmp('loginPanel').body.mask();
+          Ext.getCmp('statusBar').showBusy('Authenticating ...');
+        }
+      }
+    });
+    Ext.getCmp('fpForm').getForm().submit({
+      success: function(conn, response) {
+        var data = Ext.util.JSON.decode(response.response.responseText);
+        var newpass = data.data.newpass;
+         Ext.getCmp('loginPanel').body.unmask();
+         Ext.getCmp('statusBar').clearStatus();
+         Ext.Msg.show({
+           title: 'Password resetted',
+           msg: 'Your new password was send to your email address.',
+           buttons: Ext.Msg.OK,
+           icon: Ext.Msg.INFO,
+           fn: function(btn) {
+             loginPanel.getLayout().setActiveItem(0);
+           } 
+         });
+      },
+      failure: function(form, action) {
+        Ext.getCmp('loginPanel').body.unmask();
+        Ext.getCmp('statusBar').clearStatus();
+        if (action.failureType == 'server') {
+          Ext.getCmp('statusBar').setStatus({
+            text: 'Username and email doesn\t match!',
+            iconCls: 'x-status-error'
+          });
+        } 
+      }
+    });
+  }
+  
   Ext.getCmp('loginBtn').on('click', function() {
     doLogin();
   });
   
+  Ext.getCmp('sendBtn').on('click', function() {
+    doGetNewPassword();
+  });
+  
   Ext.get('lostPwLink').on('click', function() {
-    console.log('Todo: lostPasswordFunction');
+    loginPanel.getLayout().setActiveItem(1);
+  });
+  
+  Ext.get('loginLink').on('click', function() {
+    loginPanel.getLayout().setActiveItem(0);
   });
   
   Ext.getCmp('statusBar').clearStatus();

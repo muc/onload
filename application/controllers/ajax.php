@@ -10,6 +10,7 @@ class Ajax extends Controller {
   function Ajax() {
     parent::Controller();
     $this->load->library('response');
+    $this->load->library('firephp');
   }
   
   function index() {
@@ -24,6 +25,21 @@ class Ajax extends Controller {
     }
     // login user and return success
     $this->response->success = $this->auth->login($this->input->post('username'), $this->input->post('password'));
+    echo $this->response->toJson();
+  }
+  
+  function forgotpassword() {
+    // if no post data found, redirect to start page
+    if (!($this->input->post('username') && $this->input->post('email'))) {
+      $this->response->success = false;
+      return json_encode(array('success' => false));
+    }
+    $user = Doctrine_Core::getTable('User')->findByUsername($this->input->post('username'));
+    if (!empty($user) && $user[0]->email == $this->input->post('email')) {
+      $this->load->helper('password_helper');
+      $this->response->success = true;
+      $this->response->data = array('newpass' => generate_password(10, 7));
+    }
     echo $this->response->toJson();
   }
   

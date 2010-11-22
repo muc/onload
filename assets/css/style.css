@@ -107,6 +107,7 @@ a:hover {
 
 /* Icons */
 
+.ok-icon { background-image: url(../img/ok.png) !important; }
 .lock-go-icon { background-image: url(../img/lock_go.png) !important; }
 .add-icon { background-image: url(../img/add.png) !important; }
 .edit-icon { background-image: url(../img/edit.png) !important; }
