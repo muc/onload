@@ -68,7 +68,7 @@ Ext.onReady(function() {
     baseParams: { fid: curFolder.fid },
     listeners: {
       load: function(s, records) {
-        if (curFolder.get('fid') > 0 && s.getAt(0).get('type') != 'parent') {
+        if (curFolder.get('fid') > 0) {
           insertUpFolder(curFolder.get('parent'));
         }
       },
@@ -453,9 +453,6 @@ Ext.onReady(function() {
     var uploader = new Uploader({
       url : '/browser/upload',
       fileSelector : fileSelector,
-      params: {
-        fid: curFolder.get('fid')
-      }
     });
     uploader.on('uploadfailure', function() {
       counter--;
