@@ -217,7 +217,6 @@ Ext.onReady(function() {
     }
   });
   
-  
   var browserGrid = new BrowserGrid({
     store: filesStore,
     plugins: [editor],
@@ -410,8 +409,10 @@ Ext.onReady(function() {
    * @todo remove when done with development! :)
    */
   browserGrid.on('onPermission', function() {
-    var pw = new PermissionWin({});
     var selFolder = browserGrid.getSelectionModel().getSelected();
+    var pw = new PermissionWin({
+      title: 'Permission for folder \'' + selFolder.get('name') + '\''
+    });
     pw.loadData({
       ptype: selFolder.get('perm'),
       fid: selFolder.get('fid'),
@@ -472,12 +473,9 @@ Ext.onReady(function() {
    * Shows a Window with input fields for a new password.
    */
   Ext.get('a-change-pass').on('click', function() {
-    var cpWin = new ChangePasswordWin({
-      
-    });
+    var cpWin = new ChangePasswordWin();
     cpWin.show();
   });
-  
   
   buildBreadCrumb();
 

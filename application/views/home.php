@@ -11,6 +11,7 @@
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ux/ChangePasswordWin.js"></script>
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ux/PermissionWin.js"></script>
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ux/permissionStores.js"></script>
+  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ux/BrowsePlugin.js"></script>
   
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ext/ux/roweditor/RowEditor.js"></script>
   <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/ux/BrowserGrid.js"></script>

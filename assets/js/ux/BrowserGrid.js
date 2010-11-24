@@ -32,8 +32,17 @@ BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
         ref: '../uploadBtn', 
         text: 'Upload', 
         minWidth: 70, 
-        style: 'margin-right: 5px;', 
-        scope: this
+        style: 'margin-right: 5px;',
+        plugins: [
+          new Ext.ux.file.BrowsePlugin({
+            multiple: true,
+            dropEl: Ext.get('content-panel'),
+            enableFileDrop: true,
+            inputFileName: 'file',
+          }) 
+        ],
+        scope: this,
+        handler : this.onFilesSelect
       },
       '-',
       { 
@@ -129,5 +138,11 @@ BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
   
   onReload: function() {
     this.getStore().load();
+  },
+  
+  onFilesSelect: function(fileSelector, e) {
+    Ext.each(fileSelector.getFileList(), function(file) {
+      console.log(file.fileName);
+    });
   }
 });
