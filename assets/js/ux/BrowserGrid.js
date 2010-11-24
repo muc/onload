@@ -22,7 +22,8 @@ BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
       'onEdit',
       'onDelete',
       'onDownload',
-      'onPermission'
+      'onPermission',
+      'onUpload'
     );
     BrowserGrid.superclass.initComponent.call(this);
   },
@@ -34,7 +35,7 @@ BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
         minWidth: 70, 
         style: 'margin-right: 5px;',
         plugins: [
-          new Ext.ux.file.BrowsePlugin({
+          new BrowsePlugin({
             multiple: true,
             dropEl: Ext.get('content-panel'),
             enableFileDrop: true,
@@ -141,8 +142,6 @@ BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
   },
   
   onFilesSelect: function(fileSelector, e) {
-    Ext.each(fileSelector.getFileList(), function(file) {
-      console.log(file.fileName);
-    });
+    this.fireEvent('doUpload', fileSelector);
   }
 });

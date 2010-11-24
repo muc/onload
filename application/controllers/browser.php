@@ -241,6 +241,23 @@ class Browser extends Controller {
     }
   }
 
+  function upload() {
+    parse_str($_SERVER['QUERY_STRING'],$_GET);
+    $fid = isset($_GET['fid']) ? $_GET['fid'] : 0;
+    $folder = Doctrine_Core::getTable('Folder')->find($fid);
+    $path = $this->root . $folder->path . ( $folder->id == 0 ? '' : $folder->name . '/');
+    if ($this->input->server('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest') {
+      $name =       $_SERVER['HTTP_X_FILE_NAME'];
+      $size = (int) $_SERVER['HTTP_X_FILE_SIZE'];
+      $type =       $_SERVER['HTTP_X_FILE_TYPE'];
+      $success = copy("php://input", $path.$name);
+      $this->response->success = $success;
+      echo $this->response->toJson();
+    }
+      
+    
+  }
+
   function _read_dir($path = '/', $parent = 0) {
     $source_dir = $this->root . $path;
     if ($fp = @opendir($source_dir)) {

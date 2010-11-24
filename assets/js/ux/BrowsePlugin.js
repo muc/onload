@@ -1,22 +1,13 @@
-/*
- * Tine 2.0
- * 
- * @license     New BSD License
- * @author      loeppky - based on the work done by MaximGB in Ext.ux.UploadDialog (http://extjs.com/forum/showthread.php?t=21558)
- * @version     $Id$
- *
- */
-Ext.namespace('Ext.ux.file');
 
 /**
  * @class Ext.ux.file.BrowsePlugin
  * @param {Object} config Configuration options
  */
-Ext.ux.file.BrowsePlugin = function(config) {
+BrowsePlugin = function(config) {
     Ext.apply(this, config);
 };
 
-Ext.ux.file.BrowsePlugin.prototype = {
+BrowsePlugin.prototype = {
     /**
      * @cfg {Boolean} multiple
      * allow multiple files to be selected (HTML 5 only)

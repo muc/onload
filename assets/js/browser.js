@@ -68,7 +68,7 @@ Ext.onReady(function() {
     baseParams: { fid: curFolder.fid },
     listeners: {
       load: function(s, records) {
-        if (curFolder.get('fid') > 0) {
+        if (curFolder.get('fid') > 0 && s.getAt(0).get('type') != 'parent') {
           insertUpFolder(curFolder.get('parent'));
         }
       },
@@ -443,6 +443,37 @@ Ext.onReady(function() {
         }
       });
       
+    });
+  });
+  
+  browserGrid.on('doUpload', function(fileSelector) {
+    browserGrid.body.mask('Uploading files...');
+    var files = fileSelector.getFileList();
+    var counter = files.length;
+    var uploader = new Uploader({
+      url : '/browser/upload',
+      fileSelector : fileSelector,
+      params: {
+        fid: curFolder.get('fid')
+      }
+    });
+    uploader.on('uploadfailure', function() {
+      counter--;
+      if (counter == 0) {
+        browserGrid.body.unmask();
+        Ext.Msg.alert('Upload failes');
+      }
+    });
+    uploader.on('uploadcomplete', function() {
+      counter--;
+      if (counter == 0) {
+        browserGrid.body.unmask();
+        filesStore.reload();
+      }
+    });
+    
+    Ext.each(files, function(file) {
+      uploader.upload(file);
     });
   });
   
