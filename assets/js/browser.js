@@ -1,8 +1,14 @@
+/**
+ * The browser grid frontend
+ */
 
 Ext.onReady(function() {
   Ext.QuickTips.init();
   Ext.BLANK_IMAGE_URL = BASE_URL + 'assets/js/ext/resources/images/default/s.gif';
   
+  /**
+   * add a new function to the RowSelectionModel to get the selected index
+   */
   Ext.grid.RowSelectionModel.override ({
     getSelectedIndex : function(){
       return this.grid.store.indexOf( this.selections.itemAt(0) );
@@ -24,6 +30,10 @@ Ext.onReady(function() {
     {name: 'upload'}
   ]);
   
+  
+  /**
+   * local variables 
+   */
   var bEdit = false;
   var bNew = false;
   var bNewIdx = 0;
@@ -69,16 +79,19 @@ Ext.onReady(function() {
     baseParams: { fid: curFolder.fid },
     listeners: {
       load: function(s, records) {
+        // insert the "to parent folder" to the grid 
         if (curFolder.get('fid') > 0) {
           insertUpFolder(curFolder.get('parent'));
         }
       },
       beforewrite: function(store, action, record, options, arg) {
+        // all stuff here is to prevent the store to create a new folder for the "to parent folder link"
         if (bNew) {
           return false;
         }
         if (action == 'create') {
           if (record.constructor != Array) {
+            // remove the dirty flag in grid
             if (record.get('type') == 'parent') {
               record.modified['name'] = undefined;
               record.modified['fid'] = undefined;
@@ -100,6 +113,9 @@ Ext.onReady(function() {
     }
   });
   
+  /**
+   * Insert the "to parent folder" to the grid
+   */
   function insertUpFolder(fid) {
     Ext.Ajax.request({
       url: 'browser/get_folder',
@@ -117,20 +133,26 @@ Ext.onReady(function() {
     });
   }
   
+  /**
+   * Checkbox selection model for the grid
+   */
   var sm = new Ext.grid.CheckboxSelectionModel({
     renderer: function(value, meta, record, rowIndex, colIndex, store) {
+      // only show the checkbox, if the folder isnt the "to parent folder" link
       if (record.get('type') != 'parent') {
         return '<div class="x-grid3-row-checker">&#160;</div>';
       }
     },
     listeners: {
       selectionchange: function() {
+        // update toolbar buttons visibility, when grid selection change
         if (filesStore.getCount() > 0 && filesStore.getAt(0).get('type') == 'parent' && this.isSelected(0)) {
           this.deselectRow(0);
         }
         
         var isFolder = this.hasSelection() ?
           (this.getSelected().get('type') == 'folder' ? true : false) : false;
+          
         browserGrid.downloadBtn.setDisabled(this.getCount() < 1);
         browserGrid.editBtn.setDisabled(this.getCount() != 1);
         browserGrid.deleteBtn.setDisabled(this.getCount() < 1);
@@ -139,6 +161,10 @@ Ext.onReady(function() {
     }
   });
   
+  /**
+   * Renderer for grid column 'Name'
+   * Add icon and folder information, instead of the name only
+   */
   function renderName(value, meta, record, rowIndex, colIndex, store) {
     if (record.get('type') == 'folder') {
       var img = '<img src="assets/img/folder.gif"/>';
@@ -163,6 +189,10 @@ Ext.onReady(function() {
     }
   }
   
+  /**
+   * Renderer for grid column 'Permission'
+   * Show an icon instead of the name
+   */
   function renderPermission(value, meta, record, rowIndex, colIndex, store) {
     if (value == 1) {
       return '<img src="assets/img/private.png"/>';
@@ -175,6 +205,9 @@ Ext.onReady(function() {
     }
   }
   
+  /**
+   * Grid editor for inline editing
+   */
   var editor = new Ext.ux.grid.RowEditor({
     saveText: 'Save',
     clicksToEdit: 2,
@@ -183,21 +216,21 @@ Ext.onReady(function() {
       saveclicked: function() { bEdit = false; },
       afteredit: function() { 
         bEdit = false; 
-        console.info('a');
       },
       validateedit: function(roweditor, obj, record, rowIndex) {
-        console.info('v');
         bEdit = false; 
         bNew = false;
       },
       canceledit: function() { 
         bEdit = false;
         if (bNew) {
+          // remove the created folder, if cancel is clicked
           bNew = false;
           filesStore.removeAt(bNewIdx);
           browserGrid.getView().refresh();
         }
       },
+      
       move: function(p){ this.resize(); },
       hide: function(p){
         var mainBody = this.grid.getView().mainBody;
@@ -208,6 +241,7 @@ Ext.onReady(function() {
       },
       afterlayout: function(container, layout) { this.resize(); }
     },
+    // fix for inline editing, if it's the last row
     resize: function() {
       var row = Ext.fly(this.grid.getView().getRow(this.rowIndex)).getBottom();
       var lastRow = Ext.fly(this.grid.getView().getRow(this.grid.getStore().getCount()-1)).getBottom();
@@ -217,6 +251,9 @@ Ext.onReady(function() {
     }
   });
   
+  /*
+   * create the browser grid panel
+   */
   var browserGrid = new BrowserGrid({
     store: filesStore,
     plugins: [editor],
@@ -237,20 +274,22 @@ Ext.onReady(function() {
     sm: sm,
     listeners: {
       rowdblclick: function(grid, rowIndex, e) {
+        // change directory on double click
         var record = filesStore.getAt(rowIndex);
         if (record.get('type') == 'folder' || record.get('type') == 'parent') {
           changeDir(record);
         }
-      },
-      validateedit: function(e) {
-        console.log(e);
       }
     }
   });
   
-  
+  /**
+   * Handles the change directory action
+   */
   function changeDir(dir, n) {
     curFolder = dir;
+    
+    // set upload button visibility, dependent on user permission
     browserGrid.uploadBtn.setDisabled(
       curFolder.get('fid') == 0 
       ? false
@@ -258,6 +297,8 @@ Ext.onReady(function() {
     );
     filesStore.setBaseParam('fid', dir.get('fid'));
     filesStore.load();
+    
+    // update the breadcrumb, and check if it was a grid double click or a breadcrumb click
     if (n >= 0) {
       n++;
       if (breadCrumbObj.length > (n)) {
@@ -280,6 +321,10 @@ Ext.onReady(function() {
     buildBreadCrumb();
   }
   
+  
+  /**
+   * function, that updates the breadcrumb
+   */
   function buildBreadCrumb() {
     breadCrumb.removeAll();
     var bcPath = new Array();
@@ -296,6 +341,7 @@ Ext.onReady(function() {
     });
     breadCrumb.doLayout();
     
+    // event handler for 'Home' link click in breadcrumb
     Ext.select('a.bc-home').on('click', function(e, t, o) {
       var id = e.getTarget('', 1, true).id.split('-')[3];
       var n = 0;
@@ -312,6 +358,7 @@ Ext.onReady(function() {
         n++;
       });
     });
+    // event handler for folder link click in breadcrumb
     Ext.select('a.bc-folder').on('click', function(e, t, o) {
       var id = e.getTarget('', 1, true).id.split('-')[3];
       var n = 0;
@@ -330,11 +377,17 @@ Ext.onReady(function() {
     });
   }
   
+  /*
+   * click event handler for edit button
+   */
   browserGrid.on('onEdit', function() {
     bEdit = true;
     editor.startEditing(browserGrid.getSelectionModel().getSelectedIndex(), true);
   });
   
+  /*
+   * click event handler for new folder button
+   */
   browserGrid.on('onNew', function() {
     bEdit = true;
     bNew = true;
@@ -347,22 +400,30 @@ Ext.onReady(function() {
       files: 0
     });
     editor.stopEditing();
+    // insert a new folder to grid
     bNewIdx = curFolder.get('fid') > 0 ? 1 : 0;
-    
     filesStore.insert(bNewIdx, f);
     browserGrid.getView().refresh();
     browserGrid.getSelectionModel().selectRow(bNewIdx);
+    // and start edit mode
     editor.startEditing(bNewIdx);
   });
   
+  /*
+   * click event handler for delete button
+   */
   browserGrid.on('onDelete', function() {
     var records = browserGrid.getSelectionModel().getSelections();
     var bNotEmtpy = false;
+    
+    // check, if selected folder has files or subfolders
     Ext.each(records, function(rec) {
       if (rec.get('files') > 0 || rec.get('folders') > 0) {
         bNotEmtpy = true;
       }
     });
+    
+    // only emtpy folders can be deleted
     if (bNotEmtpy) {
       Ext.Msg.show({
         title: 'Deletion not possible',
@@ -374,6 +435,7 @@ Ext.onReady(function() {
     else {
       Ext.Msg.confirm('Delete', 'Are you sure to delete selected folders and files?', function(btn) {
         if (btn == 'yes') {
+          // remove selected files/folders from the store
           filesStore.remove(records);
           filesStore.reload();
         }
@@ -381,10 +443,14 @@ Ext.onReady(function() {
     }
   });
   
+  /*
+   * click event handler for download button
+   */
   browserGrid.on('onDownload', function() {
     var records = browserGrid.getSelectionModel().getSelections();
     var data = null;
     
+    // check how many files/folders are selected
     if (records.length == 1) {
       var record = records[0];
       data = {
@@ -403,18 +469,21 @@ Ext.onReady(function() {
         });
       });
     }
+    
+    // update the html form and submit it
     Ext.get('count').dom.value = records.length;
     Ext.get('data').dom.value = Ext.util.JSON.encode(data);
     $('#dlform').submit();
   });
   
-  /**
-   * Test Button
-   * To get quick access to functionality for testing purposes
-   * @todo remove when done with development! :)
-   */
+  
+  /*
+   * click event handler for folder permission button
+   */ 
   browserGrid.on('onPermission', function() {
     var selFolder = browserGrid.getSelectionModel().getSelected();
+    
+    // create the permission window
     var pw = new PermissionWin({
       title: 'Permission for folder \'' + selFolder.get('name') + '\''
     });
@@ -423,10 +492,13 @@ Ext.onReady(function() {
       fid: selFolder.get('fid'),
     });
     pw.show();
+    
+    // event handler for the save button
     pw.on('save', function(ptid, pu_store) {
       var folder = filesStore.getById(selFolder.get('fid'));
       folder.set('perm', ptid);
       
+      // send new permissions to the backend
       var data = new Array();
       var jsonDataEncode = "";
       var records = pu_store.getRange();
@@ -443,6 +515,7 @@ Ext.onReady(function() {
           data: jsonDataEncode
         },
         success: function() {
+          // cleare the store in permission window, when ajax request was successful
           pu_store.removeAll();
           pu_store.commitChanges();
         }
@@ -451,6 +524,9 @@ Ext.onReady(function() {
     });
   });
   
+  /*
+   * click event handler for folder upload button
+   */ 
   browserGrid.on('doUpload', function(fileSelector) {
     browserGrid.body.mask('Uploading files...');
     var files = fileSelector.getFileList();
@@ -479,6 +555,9 @@ Ext.onReady(function() {
     });
   });
   
+  /*
+   * Hide some toolbar buttons, if loggedin user has now admin rights
+   */
   function showButtons(bShow) {
     browserGrid.newBtn.setVisible(bShow);
     browserGrid.editBtn.setVisible(bShow);
@@ -490,6 +569,9 @@ Ext.onReady(function() {
     browserGrid.deleteBtnSep.setVisible(bShow);
   }
   
+  /* 
+   * render the breadcrumb.
+   */
   var breadCrumb = new Ext.Toolbar({
     id: 'breadCrumb',
     renderTo: browserGrid.tbar,

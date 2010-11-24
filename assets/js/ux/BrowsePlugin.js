@@ -1,6 +1,6 @@
 
 /**
- * @class Ext.ux.file.BrowsePlugin
+ * @class BrowsePlugin
  * @param {Object} config Configuration options
  */
 BrowsePlugin = function(config) {

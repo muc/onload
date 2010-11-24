@@ -3,7 +3,6 @@
  * Ajax controller
  * Handles incoming ajax requests
  * 
- * @author Marc Hitscherich
  */
 class Ajax extends Controller {
   
@@ -35,6 +34,8 @@ class Ajax extends Controller {
       return json_encode(array('success' => false));
     }
     $user = Doctrine_Core::getTable('User')->findByUsername($this->input->post('username'));
+    
+    // only create new password, if emails are equal
     if (!empty($user) && $user[0]->email == $this->input->post('email')) {
       $this->load->helper('password_helper');
       $this->response->success = true;
@@ -44,17 +45,22 @@ class Ajax extends Controller {
   }
   
   function changepassword() {
+    // if no post data found, redirect to start page
     if (!($this->input->post('new_password') && $this->input->post('cnew_password'))) {
       $this->response->success = false;
       return json_encode(array('success' => false));
     }
+    // check, if an user is logged in
     if (!$this->auth->isLoggedIn()) {
       $this->response->success = false;
       $this->response->message = 'No logged in user found.';
     }
+    // check if password and confirmed passward are equal
     if (($this->input->post('new_password') != $this->input->post('cnew_password'))) {
       $this->response->success = false;
     }
+    
+    // save new password
     $user = $this->auth->currentUser();
     $user->password = $this->input->post('new_password');
     $user->save();
@@ -63,11 +69,13 @@ class Ajax extends Controller {
   }
   
   function currentuser() {
+    // check, if an user is logged in
     if (!$this->auth->isLoggedIn()) {
       $this->response->success = false;
       $this->response->message = 'No logged in user found.';
     }
     else {
+      // return current logged in user
       $user = $this->auth->currentUser();
       $this->response->success = true;
       $this->response->data = array(
@@ -81,7 +89,7 @@ class Ajax extends Controller {
   }
   
   function users($action = 'view') {
-    
+    // only admin is allowed
     if (!$this->auth->isAdmin()) {
       $this->response->success = false;
       $this->response->message = 'Authentication failed.';
@@ -90,6 +98,7 @@ class Ajax extends Controller {
     }
     
     switch ($action) {
+      // Get all users
       case 'view':
         $start = $this->input->post('start') ? $this->input->post('start') : 0;
         $limit = $this->input->post('limit') ? $this->input->post('limit') : 0;
@@ -108,7 +117,7 @@ class Ajax extends Controller {
         break;
         
       case 'create':
-        // INSERT
+        // Create a new user
         $data = json_decode($this->input->post('data'), true);
         $user = new User();
         foreach ($data as $key => $value) {
@@ -119,11 +128,13 @@ class Ajax extends Controller {
         break;
         
       case 'update':
-        // UPDATE
+        // Update an user
         $data = json_decode($this->input->post('data'), true);
         $id = $data['id'];
         unset($data['id']);
         $user = Doctrine::getTable('User')->find($id);
+        
+        //loop throu all changes
         foreach ($data as $key => $value) {
           $user->$key = $value;
         }
@@ -132,7 +143,10 @@ class Ajax extends Controller {
         break;
         
       case 'destroy':
+        // Delete an user
         $id = (int)json_decode(stripslashes($this->input->post('data')));
+        
+        // prevent delete the user himself
         if ($this->auth->currentUser()->id != $id) {
           $user = Doctrine::getTable('User')->find($id);
           $user->delete();

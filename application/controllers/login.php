@@ -3,7 +3,6 @@
 /**
  * Login controller
  * 
- * @author Marc Hitscherich
  */
 class Login extends Controller {
   

@@ -1,7 +1,10 @@
+/**
+ * Admin grid frontend
+ */
+
 Ext.onReady(function() {
   Ext.QuickTips.init();
   Ext.BLANK_IMAGE_URL = BASE_URL + 'assets/js/ext/resources/images/default/s.gif';
-  
   
   var User = Ext.data.Record.create([
     {name: 'id', type: 'int'},
@@ -228,16 +231,17 @@ Ext.onReady(function() {
   userForm.saveBtn.on('click', function() {
     var values = userForm.getForm().getValues();
     if (formEditMode) {
+      // if we are in edit mode, update the record
       userForm.getForm().updateRecord(curRecord);
     }
     else {
+      // we are in create user mode, so create a new user
       userStore.add(new userStore.recordType(userForm.getForm().getValues()));
     }
     userStore.reload();
     setUserFormDisabled(true);
     adminGrid.setDisabled(false);
     userForm.getForm().loadRecord(curRecord);
-    //adminGrid.getSelectionModel().selectRecords(lastSelection);
   });
   
   userForm.cancelBtn.on('click', function() {

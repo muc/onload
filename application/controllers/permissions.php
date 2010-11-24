@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Permissions controller
+ * 
+ * handles ajax request for permissions
+ */
 class Permissions extends Controller {
   
   function Permissions() {
@@ -11,6 +15,9 @@ class Permissions extends Controller {
     redirect('/');
   }
   
+  /**
+   * Returns an array of all available permission types
+   */
   function permtype() {
     $pt = Doctrine_Core::getTable('PermissionType')->findAll();
     echo json_encode(array(
@@ -19,9 +26,13 @@ class Permissions extends Controller {
     ));
   }
   
+  /**
+   * Returns an array of all users for a given folder id, that have NO permission to it
+   */
   function fusers() {
     $fid = $this->input->post('fid');
     
+    // get users for a folder, that have permission to it
     $qp = Doctrine_Query::create()
       ->from('User u')
       ->leftJoin('u.Permissions p')
@@ -37,11 +48,14 @@ class Permissions extends Controller {
       );
     }
 
+    // get all users for a folder, that have NO permission to it
     $qa = Doctrine_Query::create()
       ->from('User u')
       ->where('u.admin = false');
     $r_au = $qa->execute();
     $all_users = array();
+    
+    // only add users to the array, that are not in the permitted user array
     foreach ($r_au as $au) {
       $add = true;
       foreach ($perm_users as $pu) {
@@ -64,6 +78,9 @@ class Permissions extends Controller {
     ));
   }
 
+  /**
+   * Returns an array of all users for a given folder id, that have permission to it
+   */
   function pusers() {
     $fid = $this->input->post('fid');
 
@@ -88,17 +105,22 @@ class Permissions extends Controller {
     ));
   }
   
+  /**
+   * Updates user permissions to a folder
+   */
   function update() {
     $fid = $this->input->post('fid');
     $data = json_decode($this->input->post('data'), true);
     
     $folder = Doctrine_Core::getTable('Folder')->find($fid);
     
+    // first, delete all existing permission for this folder
     $q = Doctrine_Query::create()
       ->delete('Permission p')
       ->where('p.folder_id = ?', $fid);
     $q->execute();
     
+    // if new permission type is "shared", add user permissions
     if ($folder->ptid == 2) {
       foreach ($data as $user) {
         $perm = new Permission();

@@ -3,7 +3,6 @@
 /**
  * Logout controller
  * 
- * @author Marc Hitscherich
  */
 class Logout extends Controller {
   

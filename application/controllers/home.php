@@ -4,7 +4,6 @@
  * Home controller
  * The main page
  * 
- * @author Marc Hitscherich
  */
 class Home extends Controller {
   
