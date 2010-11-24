@@ -285,25 +285,57 @@ class Browser extends Controller {
             $folder->description = '';
             $folder->save();
           }
-          $files = get_dir_file_info($source_dir.$file.'/');
           
           // check permission
           // is Admin
           // not Admin && ptid == 3 (public)
           // not Admin && ptid == 2 && permission fid and uid set.
+          $user = $this->auth->currentUser();
+          $allowed =  false;
+          $upload = $user->admin;
+          if ($folder->id == 0) {
+            $allowed = true;
+          }
+          else {
+            if ($user->admin === true) {
+              $allowed = true;
+            }
+            else {
+              if ($folder->ptid == 3) {
+                $allowed = true;
+                $upload = true;
+              } 
+              if ($folder->ptid == 2) {
+                $q = Doctrine_Query::create()
+                  ->from('Permission p')
+                  ->where('p.folder_id = ?', $folder->id)
+                  ->andWhere('p.user_id = ?', $user->id);
+                $p = $q->fetchOne();
+                if ($p->count() > 0) {
+                  $allowed = true;
+                  $upload = $p->upload;
+                }
+              }
+            }
+            
+          }
           
-          $folderdata[] = array(
-            'name' => $file,
-            'type' => 'folder',
-            'path' => $path,
-            'parent' => $parent,
-            'description' => $folder->description,
-            'fid' => $folder->id,
-            'perm' => $folder->ptid,
-            'icon' => 'folder',
-            'folders' => $this->_count_dirs($source_dir.$file.'/'),
-            'files' => count($files)
-          );
+          if ($allowed) {
+            $files = get_dir_file_info($source_dir.$file.'/');
+            $folderdata[] = array(
+              'name' => $file,
+              'type' => 'folder',
+              'path' => $path,
+              'parent' => $parent,
+              'description' => $folder->description,
+              'fid' => $folder->id,
+              'perm' => $folder->ptid,
+              'icon' => 'folder',
+              'upload' => $upload,
+              'folders' => $this->_count_dirs($source_dir.$file.'/'),
+              'files' => count($files)
+            );
+          }
         }
         else {
           // files

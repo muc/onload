@@ -112,6 +112,8 @@ a:hover {
 .add-icon { background-image: url(../img/add.png) !important; }
 .edit-icon { background-image: url(../img/edit.png) !important; }
 .delete-icon { background-image: url(../img/delete.png) !important; }
+.upload-icon { background-image: url(../img/arrow_up.png) !important; }
+.download-icon { background-image: url(../img/arrow_down.png) !important; }
 .reload-icon { background-image: url(../img/reload.png) !important; }
 .save-icon { background-image: url(../img/save.png) !important; }
 .cancel-icon { background-image: url(../img/cancel.png) !important; }
@@ -121,6 +123,7 @@ a:hover {
 .user-panel-icon { background-image: url(../img/group.png) !important; }
 
 .folder-icon { background-image: url(../img/folder.gif) !important; }
+.folder-perm-icon { background-image: url(../img/folder_user.png) !important; }
 
 .folder-link, .bc-folder { 
 	background-image: url(../img/folder.gif);
@@ -222,7 +225,7 @@ a:hover {
 }
 
 .file-picture {
-	background-image: url(../img/file_php.png);
+	background-image: url(../img/file_picture.png);
 	background-repeat: no-repeat;
 	padding: 2px 0 0 20px;
 	height: 16px;

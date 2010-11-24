@@ -34,6 +34,7 @@ BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
         text: 'Upload', 
         minWidth: 70, 
         style: 'margin-right: 5px;',
+        iconCls: 'upload-icon',
         plugins: [
           new BrowsePlugin({
             multiple: true,
@@ -52,10 +53,15 @@ BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
         minWidth: 70,
         tyle: 'margin-right: 5px;', 
         disabled: true, 
+        iconCls: 'download-icon',
         handler: this.onDownload,
         scope: this
       },
-      '-',
+      {
+        xtype: 'tbseparator',
+        ref: '../newBtnSep',
+        id: 'newBtnSep'
+      },
       { 
         ref: '../newBtn', 
         text: 'new Folder', 
@@ -65,7 +71,11 @@ BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
         handler: this.onNew,
         scope: this
       },
-      '-',
+      {
+        xtype: 'tbseparator',
+        ref: '../editBtnSep',
+        id: 'editBtnSep'
+      },
       { 
         ref: '../editBtn', 
         text: 'Edit', 
@@ -76,17 +86,26 @@ BrowserGrid = Ext.extend(Ext.grid.GridPanel, {
         handler: this.onEdit,
         scope: this
       },
-      '-',
+      {
+        xtype: 'tbseparator',
+        ref: '../permBtnSep', 
+        id: 'permBtnSep'
+      },
       { 
         ref: '../permBtn', 
         text: 'Folder Permission', 
         minWidth: 70, 
         style: 'margin-right: 5px;', 
         disabled: true,
+        iconCls: 'folder-perm-icon',
         scope: this, 
         handler: this.onPermission
       },
-      '-',
+      {
+        xtype: 'tbseparator',
+        ref: '../deleteBtnSep',
+        id: 'deleteBtnSep'
+      },
       { 
         ref: '../deleteBtn', 
         text: 'Delete', 

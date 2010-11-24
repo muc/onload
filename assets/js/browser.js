@@ -20,7 +20,8 @@ Ext.onReady(function() {
     {name: 'type'},
     {name: 'icon'},
     {name: 'folders'},
-    {name: 'files'}
+    {name: 'files'},
+    {name: 'upload'}
   ]);
   
   var bEdit = false;
@@ -130,7 +131,6 @@ Ext.onReady(function() {
         
         var isFolder = this.hasSelection() ?
           (this.getSelected().get('type') == 'folder' ? true : false) : false;
-        
         browserGrid.downloadBtn.setDisabled(this.getCount() < 1);
         browserGrid.editBtn.setDisabled(this.getCount() != 1);
         browserGrid.deleteBtn.setDisabled(this.getCount() < 1);
@@ -251,6 +251,11 @@ Ext.onReady(function() {
   
   function changeDir(dir, n) {
     curFolder = dir;
+    browserGrid.uploadBtn.setDisabled(
+      curFolder.get('fid') == 0 
+      ? false
+      : curFolder.get('upload') ? false : true
+    );
     filesStore.setBaseParam('fid', dir.get('fid'));
     filesStore.load();
     if (n >= 0) {
@@ -474,6 +479,17 @@ Ext.onReady(function() {
     });
   });
   
+  function showButtons(bShow) {
+    browserGrid.newBtn.setVisible(bShow);
+    browserGrid.editBtn.setVisible(bShow);
+    browserGrid.permBtn.setVisible(bShow);
+    browserGrid.deleteBtn.setVisible(bShow);
+    browserGrid.newBtnSep.setVisible(bShow);
+    browserGrid.editBtnSep.setVisible(bShow);
+    browserGrid.permBtnSep.setVisible(bShow);
+    browserGrid.deleteBtnSep.setVisible(bShow);
+  }
+  
   var breadCrumb = new Ext.Toolbar({
     id: 'breadCrumb',
     renderTo: browserGrid.tbar,
@@ -505,6 +521,7 @@ Ext.onReady(function() {
     cpWin.show();
   });
   
+  showButtons(isAdmin);
   buildBreadCrumb();
 
 });
