@@ -70,9 +70,9 @@ class Browser extends Controller {
   function create_dir() {
     $data = json_decode($this->input->post('data'), true);
     
-    // check, if $data contains more than one folder
+    // check, if $data contains more than one folder, only grab the first one
     $keys = array_keys($data);
-    if (!is_numeric($keys)) {
+    if (!is_numeric($keys) && isset($data[0])) {
       $data = $data[0];
     }
     $path = '/';

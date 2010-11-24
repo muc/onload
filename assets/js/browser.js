@@ -264,9 +264,9 @@ Ext.onReady(function() {
       },
       columns: [
         sm,
-        {id: 'name', header: 'Name', width: 200, dataIndex: 'name', renderer: renderName, editor: {xtype: 'textfield',allowBlank: false}},
+        {id: 'name', header: 'Name', width: 250, dataIndex: 'name', renderer: renderName, editor: {xtype: 'textfield',allowBlank: false}},
         {id: 'description', header: 'Description', dataIndex: 'description', editor: {xtype: 'textfield'}},
-        {header: 'Tags', width: 200, dataIndex: 'tags', editor: {xtype: 'textfield'}},
+        //{header: 'Tags', width: 200, dataIndex: 'tags', editor: {xtype: 'textfield'}},
         {header: 'Size', width: 100, dataIndex: 'size', editable: false},
         {header: 'Perm', width: 50, dataIndex: 'perm', renderer: renderPermission, editable: false},
       ]
